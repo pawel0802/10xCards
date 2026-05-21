@@ -2,7 +2,28 @@
 
 **Platform:** Cloudflare Workers + Static Assets  
 **Deployment command:** `wrangler deploy` (NOT `wrangler pages deploy`)  
-**Researched in:** `context/foundation/infrastructure.md`
+**Researched in:** `context/foundation/infrastructure.md`  
+**Status:** ✅ First deploy completed — https://10x-cards.pawel0802.workers.dev
+
+---
+
+## Corporate Network Note
+
+All `wrangler` commands must be prefixed with the following on Windows behind a corporate proxy with SSL inspection:
+
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+```
+
+`wrangler login` (OAuth browser flow) **does not work** on the corporate network. Use a Cloudflare API Token instead:
+
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+$env:CLOUDFLARE_API_TOKEN = "your-api-token"
+npx wrangler whoami  # verify auth
+```
+
+`.dev.vars` is **local dev only** — wrangler never reads it during `wrangler deploy`. Secrets must be pushed to Cloudflare Vault separately (see Phase 2).
 
 ---
 
@@ -10,103 +31,106 @@
 
 ### Gaps found vs. infrastructure.md recommendations
 
-| # | Gap | Status | Action |
-|---|-----|--------|--------|
-| G1 | `wrangler.jsonc` name is `"10x-astro-starter"` (starter default) | ❌ | Rename to `"10x-cards"` |
-| G2 | No Cloudflare API token for CI | ❌ | Generate token, add as repo secret |
-| G3 | CI workflow has no deploy step | ❌ | Add `deploy.yml` for production deploys |
-| G4 | No bundle size guard in CI | ❌ | Add check: fail if `dist/_worker.js > 2.8MB` |
-| G5 | Cloudflare Auto Minify not documented as disabled | ❌ | Add to checklist + AGENTS.md |
-| G6 | Supabase secrets not yet in Cloudflare Vault | ❌ | Push via `wrangler secret put` |
-| G7 | `wrangler tail` post-deploy monitoring not scripted | ❌ | Document as manual step |
+| # | Gap | Status | Resolution |
+|---|-----|--------|------------|
+| G1 | `wrangler.jsonc` name was `"10x-astro-starter"` (starter default) | ✅ Fixed | Renamed to `"10x-cards"` |
+| G2 | No Cloudflare API token for CI | ✅ Fixed | Token generated, added as `CLOUDFLARE_API_TOKEN` repo secret |
+| G3 | CI workflow had no deploy step | ✅ Fixed | `.github/workflows/deploy.yml` added |
+| G4 | No bundle size guard in CI | ✅ Fixed | Bundle check added to `deploy.yml` |
+| G5 | Cloudflare Auto Minify not documented as disabled | ✅ Documented | See Phase 5 — required after custom domain attached |
+| G6 | Supabase secrets not yet in Cloudflare Vault | ✅ Fixed | Pushed via `wrangler secret put` |
+| G7 | SESSION KV binding auto-provisioned without id | ✅ Fixed | `wrangler.jsonc` updated with `id: 940493403a3a41c18e04383935e9e05a` |
 
 ---
 
-## Phase 1 — Configuration Fixes
+## Phase 1 — Configuration Fixes ✅
 
-### 1.1 Fix worker name in `wrangler.jsonc`
+### 1.1 Worker name in `wrangler.jsonc`
 
 ```jsonc
-// wrangler.jsonc — change name from starter default to production name
 {
-  "name": "10x-cards",   // was: "10x-astro-starter"
+  "name": "10x-cards",  // production subdomain: 10x-cards.pawel0802.workers.dev
   ...
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "940493403a3a41c18e04383935e9e05a"  // auto-provisioned on first deploy
+    }
+  ]
 }
 ```
 
-> **Why:** The `name` field becomes the subdomain: `10x-cards.workers.dev`. The starter default would create a confusing production URL.
+> **Why the KV id matters:** Without `id`, wrangler tries to create a new `10x-cards-session` namespace on every deploy and fails with `code: 10014` (already exists). The id locks it to the existing namespace.
 
 ---
 
-## Phase 2 — Secrets & Credentials
+## Phase 2 — Secrets & Credentials ✅
 
 ### 2.1 Push Supabase secrets to Cloudflare Workers Vault
 
-Run once (interactive, requires `wrangler` login):
+Run once. Secrets persist in Cloudflare — no need to repeat on future deploys.
 
-```bash
-# Authenticate if not already logged in
-npx wrangler login
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+$env:CLOUDFLARE_API_TOKEN = "your-api-token"
 
-# Push secrets (taken from .dev.vars — never commit these)
+# Values taken from .dev.vars — never commit these
 echo "https://ienydkltkzzxsxvtquxe.supabase.co" | npx wrangler secret put SUPABASE_URL
 echo "<your-supabase-anon-key>" | npx wrangler secret put SUPABASE_KEY
+
+# Verify
+npx wrangler secret list
 ```
 
-> **Security note:** `.dev.vars` is gitignored and contains the real values. The anon key is safe to expose client-side per Supabase architecture, but treat it as a secret to allow rotation without code changes.
-
-### 2.2 Generate Cloudflare API Token for CI/CD
+### 2.2 Cloudflare API Token for CI/CD ✅
 
 1. Cloudflare Dashboard → My Profile → API Tokens → Create Token
-2. Use template: **"Edit Cloudflare Workers"**
-3. Scope: Account = your account, Zone Resources = All zones (or restrict to specific zone)
-4. Copy the token value
-5. Add to GitHub: **Settings → Secrets and variables → Actions → New repository secret**
-   - Name: `CLOUDFLARE_API_TOKEN`
-   - Value: the token
-
-> Also add `CLOUDFLARE_ACCOUNT_ID` (found in the Cloudflare dashboard right sidebar).
+2. Template: **"Edit Cloudflare Workers"**
+3. Add to GitHub repo secrets:
+   - `CLOUDFLARE_API_TOKEN` — the token value
+   - `CLOUDFLARE_ACCOUNT_ID` — found in Cloudflare dashboard right sidebar
 
 ---
 
-## Phase 3 — Bundle Size Verification
+## Phase 3 — Bundle Size Verification ✅
 
-Run before every deploy to avoid hitting the 3MB free-tier hard limit:
+**Current size: ~1.88 MB server bundle (well within 3MB free-tier limit)**
 
-```bash
+Re-check after any significant dependency addition:
+
+```powershell
 npm run build
 
-# Windows (PowerShell)
-$size = (Get-Item dist\_worker.js).Length
-Write-Host "Bundle size: $([math]::Round($size/1MB, 2)) MB"
-if ($size -gt 2949120) { Write-Error "Bundle exceeds 2.8MB threshold!" }
-
-# Unix/CI
-du -sh dist/_worker.js
+# Windows (PowerShell) — check server bundle total
+$size = (Get-ChildItem dist\server -Recurse | Measure-Object -Property Length -Sum).Sum
+Write-Host "Server bundle: $([math]::Round($size/1MB, 2)) MB"
+if ($size -gt 2949120) { Write-Error "Exceeds 2.8MB threshold!" }
 ```
 
-**Current expected size:** <1MB (no AI SDK bundled yet). Re-check after adding any AI library.
+CI bundle check uses `du -sb dist/server/` in `deploy.yml` (Ubuntu runner).
 
 ---
 
-## Phase 4 — First Manual Deploy
+## Phase 4 — Deploy ✅
 
-```bash
-# 1. Verify login
-npx wrangler whoami
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+$env:CLOUDFLARE_API_TOKEN = "your-api-token"
 
-# 2. Build
+# Build
 npm run build
 
-# 3. Check bundle size (see Phase 3)
-
-# 4. Deploy to production
+# Deploy
 npx wrangler deploy
+```
 
-# Expected output:
-#   Uploaded 10x-cards (X sec)
-#   Deployed 10x-cards triggers (X sec)
-#   https://10x-cards.<account-subdomain>.workers.dev
+**First deploy output:**
+```
+Total Upload: 1919.97 KiB / gzip: 392.75 KiB
+Uploaded 10x-cards (16.47 sec)
+Deployed 10x-cards triggers (6.02 sec)
+  https://10x-cards.pawel0802.workers.dev
+Current Version ID: c0564ad0-0f08-429d-b5a9-5d56c193074b
 ```
 
 ---
@@ -115,40 +139,46 @@ npx wrangler deploy
 
 ### 5.1 Smoke test
 
-```bash
-curl -I https://10x-cards.<account>.workers.dev/
-# Expect: HTTP/2 200
+> ⚠️ **Cannot be executed from corporate network** — Cloudflare Workers URLs are blocked by the Commerzbank firewall proxy. Test manually in a browser or from a mobile device/home network.
 
-curl -I https://10x-cards.<account>.workers.dev/auth/signin
-# Expect: HTTP/2 200
-```
+URL to test: **https://10x-cards.pawel0802.workers.dev**
 
-### 5.2 Error monitoring (run for 10 minutes post-deploy)
+| Route | Expected |
+|-------|----------|
+| `/` | 200 or redirect to `/auth/signin` |
+| `/auth/signin` | 200 — sign-in form |
+| `/auth/signup` | 200 — sign-up form |
 
-```bash
+### 5.2 Error monitoring
+
+> ⚠️ `wrangler tail` also blocked by corporate proxy. Run from outside the corporate network:
+
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+$env:CLOUDFLARE_API_TOKEN = "your-api-token"
 npx wrangler tail --status error
 ```
 
 Watch for:
-- **Error 1101** → CPU timeout (10ms limit exceeded). Fix: upgrade to Workers Paid ($5/month).
-- **500 errors** → likely `process.env` undefined in a dependency or Supabase client misconfiguration.
+- **Error 1101** → CPU timeout (10ms free tier limit). Fix: upgrade to Workers Paid ($5/month).
+- **500 errors** → Supabase client misconfiguration or missing secrets.
 
-### 5.3 Disable Cloudflare Auto Minify (manual, dashboard)
+Alternative: check logs in Cloudflare Dashboard → Workers & Pages → 10x-cards → Logs (no proxy issues).
 
-**Required to prevent React 19 hydration mismatches.**
+### 5.3 Disable Cloudflare Auto Minify
 
-1. Cloudflare Dashboard → your domain (if using custom domain) or account → Workers & Pages → 10x-cards
-2. Speed → Optimization → Content Optimization → Auto Minify
-3. Uncheck **HTML**, **CSS**, **JavaScript**
-4. Save
+**Required to prevent React 19 hydration mismatches — only relevant once a custom domain is attached.**
 
-> If you are on the `workers.dev` subdomain only (no custom domain), this setting is not reachable yet and will only matter once you attach a domain.
+1. Cloudflare Dashboard → your zone → Speed → Optimization → Content Optimization → Auto Minify
+2. Uncheck **HTML**, **CSS**, **JavaScript** → Save
+
+> Not applicable on `workers.dev` subdomain (no zone settings available).
 
 ---
 
-## Phase 6 — CI/CD: Automated Deploy Workflow
+## Phase 6 — CI/CD: Automated Deploy Workflow ✅
 
-Create `.github/workflows/deploy.yml`:
+`.github/workflows/deploy.yml` — runs on every push to `master`:
 
 ```yaml
 name: Deploy
@@ -160,33 +190,27 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: []   # runs independently; rely on branch protection requiring CI to pass first
     environment: production
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci
-
       - name: Build
         run: npm run build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-
       - name: Check bundle size
         run: |
-          SIZE=$(stat -c%s dist/_worker.js)
-          echo "Bundle size: $(( SIZE / 1024 ))KB"
+          SIZE=$(du -sb dist/server/ | cut -f1)
+          echo "Server bundle: $(echo "scale=2; $SIZE / 1048576" | bc) MB"
           if [ "$SIZE" -gt 2949120 ]; then
-            echo "::error::Bundle exceeds 2.8MB threshold (${SIZE} bytes)"
+            echo "::error::Bundle exceeds 2.8MB (${SIZE} bytes)"
             exit 1
           fi
-
       - name: Deploy to Cloudflare Workers
         run: npx wrangler deploy
         env:
@@ -194,60 +218,52 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-> **Note:** Existing `ci.yml` runs on every push + PR (lint + build). This deploy workflow runs on push to master only. Branch protection rules should require `ci` to pass before merge — deploy happens after merge.
+> `NODE_TLS_REJECT_UNAUTHORIZED` is **not needed in CI** — GitHub Actions runners connect to Cloudflare without a corporate proxy.
 
 ---
 
 ## Phase 7 — Custom Domain (Optional, Post-MVP)
 
-```bash
-# Attach a custom domain to the Worker via wrangler
-npx wrangler deploy --routes "yourdomain.com/*"
-```
+Via Dashboard: Workers & Pages → 10x-cards → Triggers → Custom Domains → Add.
 
-Or via Dashboard: Workers & Pages → 10x-cards → Triggers → Custom Domains → Add.
-
-Once custom domain is attached: **revisit Phase 5.3** (Auto Minify) as the setting becomes accessible per-zone.
+Once attached: complete Phase 5.3 (disable Auto Minify for the zone).
 
 ---
 
 ## Rollback Procedure
 
-```bash
-# List recent versions
-npx wrangler versions list
+```powershell
+$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
+$env:CLOUDFLARE_API_TOKEN = "your-api-token"
 
-# Roll back to previous version (instant, <30s)
-npx wrangler rollback
-
-# Roll back to specific version
-npx wrangler rollback <VERSION_ID>
+npx wrangler versions list          # list recent versions
+npx wrangler rollback               # roll back to previous version (<30s)
+npx wrangler rollback <VERSION_ID>  # roll back to specific version
 ```
 
-> DB migrations (Supabase) do NOT roll back automatically. Coordinate schema changes with app rollbacks manually. Prefer additive migrations (new columns/tables) over destructive ones to make rollback safe.
+> DB migrations (Supabase) do NOT roll back automatically. Prefer additive schema changes.
 
 ---
 
-## Risk Mitigations (from infrastructure.md Risk Register)
+## Risk Mitigations
 
-| Risk | Status | Mitigation Applied |
-|------|--------|--------------------|
-| 10ms CPU limit on free tier | ⚠️ Monitor | `wrangler tail --status error` post-deploy; upgrade if 1101 errors appear |
-| Workers bundle >3MB | ✅ Guarded | Bundle size check in Phase 3 and Phase 6 CI |
-| React 19 hydration broken by Auto Minify | ✅ Documented | Phase 5.3 — explicit disable step |
-| `wrangler pages deploy` vs `wrangler deploy` confusion | ✅ Resolved | All commands in this plan use `wrangler deploy` |
-| Dual env-var access pattern | ✅ Noted | Supabase uses `astro:env/server`; Cloudflare Bindings use `locals.runtime.env` |
+| Risk | Status | Mitigation |
+|------|--------|------------|
+| 10ms CPU limit on free tier | ⚠️ Monitor | Check Cloudflare Dashboard logs; upgrade to paid ($5/month) if 1101 errors appear |
+| Workers bundle >3MB | ✅ Guarded | Bundle check in Phase 3 (manual) and `deploy.yml` (CI) |
+| React 19 hydration broken by Auto Minify | ✅ Documented | Phase 5.3 — disable after custom domain attached |
+| SESSION KV namespace conflict on deploy | ✅ Fixed | KV `id` committed to `wrangler.jsonc` |
+| `wrangler` failing on corporate network | ✅ Documented | Use `$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"` + API token |
 
 ---
 
 ## Execution Order Checklist
 
-- [ ] **P1:** Rename `wrangler.jsonc` name to `"10x-cards"`
-- [ ] **P2a:** `npx wrangler login` → push secrets to Cloudflare Vault
-- [ ] **P2b:** Generate Cloudflare API Token → add `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` to GitHub Secrets
-- [ ] **P3:** `npm run build` → verify bundle <2.8MB
-- [ ] **P4:** `npx wrangler deploy` → first production deploy
-- [ ] **P5a:** Smoke test the `*.workers.dev` URL
-- [ ] **P5b:** `npx wrangler tail --status error` for 10 minutes
-- [ ] **P5c:** Disable Auto Minify in Cloudflare Dashboard (if custom domain attached)
-- [ ] **P6:** Commit `.github/workflows/deploy.yml` to automate future deploys
+- [x] **P1:** `wrangler.jsonc` — name `"10x-cards"`, SESSION KV id added
+- [x] **P2a:** Supabase secrets pushed to Cloudflare Vault via `wrangler secret put`
+- [x] **P2b:** `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` added to GitHub Secrets
+- [x] **P3:** Build verified — server bundle ~1.88 MB (< 2.8 MB limit)
+- [x] **P4:** First deploy — https://10x-cards.pawel0802.workers.dev (version `c0564ad0`)
+- [ ] **P5:** Smoke test — verify manually in browser / mobile (corporate network blocks curl/wrangler tail)
+- [ ] **P5.3:** Disable Auto Minify — required after custom domain attached
+- [x] **P6:** `.github/workflows/deploy.yml` committed — automated CD on push to `master`
