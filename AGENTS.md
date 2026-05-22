@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-10xCards is an AI-powered flashcard generation and spaced repetition web app. Stack: Astro 6 SSR + React 19 + TypeScript + Tailwind CSS 4 + Supabase (auth + PostgreSQL) + Cloudflare Workers. Full architecture and environment reference: @CLAUDE.md.
+10xCards is an AI-powered flashcard generation and spaced repetition web app. Stack: Astro 6 SSR + React 19 + TypeScript + Tailwind CSS 4 + Supabase (auth + PostgreSQL) + Cloudflare Workers.
 
 ## Hard Rules
 
@@ -20,10 +20,26 @@ Source lives under `src/`: `components/` (Astro `.astro` for static, React `.tsx
 
 - `npm run dev` — dev server (Cloudflare workerd runtime)
 - `npm run build` — production SSR build
+- `npm run preview` — preview production build locally
 - `npm run lint` / `npm run lint:fix` — ESLint with type-checked rules
 - `npm run format` — Prettier (Astro + Tailwind plugins)
 
 Pre-commit hooks (husky + lint-staged) automatically run `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}` — do not skip hooks.
+
+## Auth Flow
+
+- `src/lib/supabase.ts` — Supabase SSR client via `@supabase/ssr` with cookie-based sessions. Reads `SUPABASE_URL` and `SUPABASE_KEY` via `astro:env/server` (declared in `astro.config.mjs` env schema).
+- `src/middleware.ts` — runs on every request, resolves the current user, attaches to `context.locals.user`. Redirects unauthenticated users away from `PROTECTED_ROUTES`.
+- API endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`
+- Auth pages: `src/pages/auth/{signin,signup,confirm-email}.astro`
+- Protected page example: `src/pages/dashboard.astro`
+
+## Environment
+
+- Node.js v22.14.0 (see `.nvmrc`)
+- Local dev env vars: copy `.env.example` → `.env` (Node) or use `.dev.vars` (Cloudflare workerd via `wrangler dev`) — both are gitignored
+- Local Supabase: `npx supabase start` (requires Docker)
+- Deploy: `npx wrangler deploy` — requires `CLOUDFLARE_API_TOKEN` set in environment (OAuth login blocked on corporate proxies; use `$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"` when behind SSL-inspecting proxy)
 
 ## Commit Convention
 

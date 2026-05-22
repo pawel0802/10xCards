@@ -44,7 +44,7 @@ hints:
 | npm package | not run                                                    | n/a      | cmd_template starts with `git clone`; npm check skipped |
 | GitHub repo | przeprogramowani/10x-astro-starter last pushed 2026-05-17 | fresh    | within 3 months of scaffold date                        |
 
-## Scaffold log (original run — 2026-05-20)
+## Scaffold log (run — 2026-05-20)
 
 **Resolved invocation**: `git clone https://github.com/przeprogramowani/10x-astro-starter .bootstrap-scaffold && cd .bootstrap-scaffold && npm install --ignore-scripts --registry https://registry.npmjs.org`
 **Strategy**: git-clone (clone into temp directory, strip git history, move files up)
@@ -57,17 +57,6 @@ hints:
 **Note on corporate network workarounds applied:**
 - Used `--registry https://registry.npmjs.org` to bypass corporate Nexus proxy (which quarantined `devalue@5.8.0`)
 - Used `--ignore-scripts` to skip the `supabase` package's postinstall binary download (GitHub release URL unreachable from corporate network). The Supabase CLI binary should be installed separately when needed for local dev (`supabase start`, migrations, etc.).
-
-## Scaffold log (re-run — 2026-05-21)
-
-**Resolved invocation**: `git clone https://github.com/przeprogramowani/10x-astro-starter .bootstrap-scaffold && cd .bootstrap-scaffold && npm install --ignore-scripts --registry https://registry.npmjs.org`
-**Strategy**: git-clone (clone into temp directory, strip git history, move files up into populated cwd)
-**Exit code**: 0
-**Conflicts (.scaffold siblings)**: 19 files/dirs — `.github`, `.husky`, `.vscode`, `public`, `src`, `supabase`, `.env.example`, `.nvmrc`, `.prettierrc.json`, `astro.config.mjs`, `CLAUDE.md`, `components.json`, `eslint.config.js`, `package-lock.json`, `package.json`, `README.md`, `tsconfig.json`, `wrangler.jsonc`, and `AGENTS.md` (skipped — cwd version is canonical)
-**.gitignore handling**: identical — no new lines to append
-**.bootstrap-scaffold cleanup**: deleted
-
-**Note**: cwd was already fully scaffolded. All existing project files preserved. Scaffold-supplied counterparts saved as `.scaffold` siblings for manual diffing if needed.
 
 ## Post-scaffold audit
 
@@ -97,7 +86,7 @@ No vulnerabilities found (0 across installed packages in cwd — cwd's existing 
 
 ## Next steps
 
-Next: a future skill will set up agent context (CLAUDE.md, AGENTS.md). For now, your project is scaffolded and verified — happy hacking.
+Next: a future skill will set up agent context (AGENTS.md). For now, your project is scaffolded and verified — happy hacking.
 
 Useful manual steps in the meantime:
 - Install the Supabase CLI separately (e.g. `scoop install supabase` or download from https://github.com/supabase/cli/releases) when you need `supabase start` for local dev.
