@@ -23,24 +23,24 @@ This plan delivers AI-powered flashcard generation from pasted text, with granul
 
 ### Phase 2: API Endpoint & Validation
 #### Automated
-- [ ] 2.1 API route exists, SSR only
-- [ ] 2.2 Zod validation enforced
-- [ ] 2.3 Error handling tested
+- [x] 2.1 API route exists, SSR only
+- [x] 2.2 Zod validation enforced
+- [x] 2.3 Error handling tested
 #### Manual
-- [ ] 2.4 Manual test: API rejects invalid input
+- [x] 2.4 Manual test: API rejects invalid input
 
 ### Phase 3: Review UI & UX
 #### Automated
-- [ ] 3.1 React island renders, disables form during generation
-- [ ] 3.2 Spinner/progress shown
-- [ ] 3.3 Error/retry logic works
+- [x] 3.1 React island renders, disables form during generation
+- [x] 3.2 Spinner/progress shown
+- [x] 3.3 Error/retry logic works
 #### Manual
-- [ ] 3.4 Manual test: Accept/edit/reject flow
-- [ ] 3.5 Navigation warning triggers
+- [x] 3.4 Manual test: Accept/edit/reject flow
+- [x] 3.5 Navigation warning triggers
 
 ### Phase 4: Persistence & Feedback
 #### Automated
-- [ ] 4.1 Accepted cards stored
-- [ ] 4.2 Rejected cards discarded
+- [x] 4.1 Accepted cards stored
+- [x] 4.2 Rejected cards discarded
 #### Manual
-- [ ] 4.3 Manual test: UI updates instantly
+- [x] 4.3 Manual test: UI updates instantly
