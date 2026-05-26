@@ -1,8 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import ReviewFlashcards from "@/components/ReviewFlashcards.astro";
+import ReviewFlashcards from "@/components/ReviewFlashcards.tsx";
 ---
 
 <Layout>
-  <ReviewFlashcards />
+  <ReviewFlashcards client:load />
 </Layout>
