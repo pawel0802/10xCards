@@ -27,7 +27,7 @@ export const POST: APIRoute = async (context) => {
   const body = await request.json();
   const parsed = SaveFlashcardsSchema.safeParse(body);
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: "Invalid input", details: parsed.error.issues }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid input." }), { status: 400 });
   }
   const { cards } = parsed.data;
   // Store cards in Supabase (table: flashcards)
@@ -39,6 +39,7 @@ export const POST: APIRoute = async (context) => {
     })),
   );
   if (error) {
+    console.error(`[Supabase] Failed to insert flashcards for user ${user.id}:`, error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
   return new Response(JSON.stringify({ success: true }), { status: 200 });

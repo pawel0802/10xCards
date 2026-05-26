@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json();
     const parsed = FlashcardInputSchema.safeParse(body);
     if (!parsed.success) {
-      return new Response(JSON.stringify({ error: parsed.error.issues }), {
+      return new Response(JSON.stringify({ error: "Invalid input." }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });

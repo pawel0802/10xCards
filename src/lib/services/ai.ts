@@ -14,40 +14,52 @@ export interface FlashcardCandidate {
 }
 
 export async function generateFlashcardsFromText(text: string): Promise<FlashcardCandidate[]> {
-  const apiKey = getEnvVar("OPENROUTER_API_KEY");
+  // Ensure API key is never logged or committed
+const apiKey = getEnvVar("OPENROUTER_API_KEY");
   const model = getEnvVar("OPENROUTER_MODEL") ?? "gpt-4.1";
 
   if (!apiKey) {
     throw new Error("OPENROUTER_API_KEY is not set in environment variables.");
   }
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert at creating spaced repetition flashcards. " +
-            'Always respond with a valid JSON array of objects, each with "front" and "back" string fields. ' +
-            "No markdown, no explanation — only the JSON array.",
+  // Retry logic for transient API failures
+  let response: Response | undefined;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
-        {
-          role: "user",
-          content: `Generate flashcards from the following text:\n${text}`,
-        },
-      ],
-      max_tokens: 1024,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+        body: JSON.stringify({
+          model,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an expert at creating spaced repetition flashcards. " +
+                'Always respond with a valid JSON array of objects, each with "front" and "back" string fields. ' +
+                "No markdown, no explanation — only the JSON array.",
+            },
+            {
+              role: "user",
+              content: `Generate flashcards from the following text:\n${text}`,
+            },
+          ],
+          max_tokens: 1024,
+        }),
+      });
+      if (response.ok) break;
+      lastError = new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+    } catch (err) {
+      lastError = err;
+    }
+    if (attempt < 3) await new Promise((res) => setTimeout(res, 500 * attempt));
+  }
+  if (!response || !response.ok) {
+    throw lastError || new Error("OpenRouter API call failed");
   }
 
   const data = await response.json();
@@ -57,7 +69,7 @@ export async function generateFlashcardsFromText(text: string): Promise<Flashcar
   try {
     parsed = JSON.parse(content);
   } catch {
-    throw new Error(`AI returned invalid JSON: ${content}`);
+    throw new Error(`AI returned invalid JSON. Output truncated: ${content.slice(0, 100)}...`);
   }
 
   if (

@@ -34,7 +34,11 @@ export default function GenerateFlashcards() {
       }));
       try {
         localStorage.setItem("reviewCandidates", JSON.stringify(generated));
-      } catch {}
+      } catch (storageErr) {
+        setError("Could not save flashcards to your browser. Please check your storage settings.");
+        setGenerating(false);
+        return;
+      }
       setTimeout(() => navigate("/review"), 500);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate flashcards");

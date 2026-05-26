@@ -13,13 +13,16 @@ interface ReviewFlashcardsProps {
 }
 
 export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcardsProps) {
+  const [storageError, setStorageError] = useState<string | null>(null);
   const [candidates, setCandidates] = useState<FlashcardCandidate[]>(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("reviewCandidates");
       if (stored) {
         try {
           return JSON.parse(stored);
-        } catch {}
+        } catch {
+          setStorageError("Could not load flashcards from your browser. Data may be corrupted.");
+        }
       }
     }
     return initialCandidates;
@@ -119,6 +122,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
 
   return (
     <div className="px-4 py-8">
+      {storageError && <div className="mb-4 text-red-500">{storageError}</div>}
       <h2 className="mb-4 text-xl font-bold">Flashcard Review</h2>
       {candidates.length > 0 && currentIdx < candidates.length && (
         <div className="mb-4 flex items-center gap-4">
