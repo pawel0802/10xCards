@@ -5,6 +5,7 @@
 This plan delivers AI-powered flashcard generation from pasted text, with granular review (accept/edit/reject) for each candidate card, and robust error handling. It integrates OpenRouter for AI, follows codebase conventions, and ensures a smooth, user-friendly review flow.
 
 ## Implementation Phases:
+
 1. **AI Service Integration** – Add OpenRouter integration, env-configurable model, and service logic for flashcard generation.
 2. **API Endpoint & Validation** – Expose a zod-validated API route for flashcard generation, SSR-only, with error handling and batch size limits.
 3. **Review UI & UX** – Build the React island for candidate review (accept/edit/reject), spinner/progress, error/retry, and navigation warning.
@@ -15,32 +16,48 @@ This plan delivers AI-powered flashcard generation from pasted text, with granul
 ## Progress
 
 ### Phase 1: AI Service Integration
+
 #### Automated
+
 - [x] 1.1 Service code and env config present
 - [x] 1.2 Unit tests for service logic
+
 #### Manual
+
 - [x] 1.3 Manual test: AI returns plausible cards
 
 ### Phase 2: API Endpoint & Validation
+
 #### Automated
+
 - [x] 2.1 API route exists, SSR only
 - [x] 2.2 Zod validation enforced
 - [x] 2.3 Error handling tested
+
 #### Manual
+
 - [x] 2.4 Manual test: API rejects invalid input
 
 ### Phase 3: Review UI & UX
+
 #### Automated
+
 - [x] 3.1 React island renders, disables form during generation
 - [x] 3.2 Spinner/progress shown
 - [x] 3.3 Error/retry logic works
+
 #### Manual
+
 - [x] 3.4 Manual test: Accept/edit/reject flow
 - [x] 3.5 Navigation warning triggers
 
 ### Phase 4: Persistence & Feedback
+
 #### Automated
+
 - [x] 4.1 Accepted cards stored
 - [x] 4.2 Rejected cards discarded
+
 #### Manual
+
 - [x] 4.3 Manual test: UI updates instantly

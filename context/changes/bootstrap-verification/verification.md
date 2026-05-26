@@ -39,9 +39,9 @@ hints:
 
 ## Pre-scaffold verification
 
-| Signal      | Value                                                      | Severity | Notes                                                   |
-| ----------- | ---------------------------------------------------------- | -------- | ------------------------------------------------------- |
-| npm package | not run                                                    | n/a      | cmd_template starts with `git clone`; npm check skipped |
+| Signal      | Value                                                     | Severity | Notes                                                   |
+| ----------- | --------------------------------------------------------- | -------- | ------------------------------------------------------- |
+| npm package | not run                                                   | n/a      | cmd_template starts with `git clone`; npm check skipped |
 | GitHub repo | przeprogramowani/10x-astro-starter last pushed 2026-05-17 | fresh    | within 3 months of scaffold date                        |
 
 ## Scaffold log (run — 2026-05-20)
@@ -55,6 +55,7 @@ hints:
 **.bootstrap-scaffold cleanup**: deleted
 
 **Note on corporate network workarounds applied:**
+
 - Used `--registry https://registry.npmjs.org` to bypass corporate Nexus proxy (which quarantined `devalue@5.8.0`)
 - Used `--ignore-scripts` to skip the `supabase` package's postinstall binary download (GitHub release URL unreachable from corporate network). The Supabase CLI binary should be installed separately when needed for local dev (`supabase start`, migrations, etc.).
 
@@ -89,6 +90,7 @@ No vulnerabilities found (0 across installed packages in cwd — cwd's existing 
 Next: a future skill will set up agent context (AGENTS.md). For now, your project is scaffolded and verified — happy hacking.
 
 Useful manual steps in the meantime:
+
 - Install the Supabase CLI separately (e.g. `scoop install supabase` or download from https://github.com/supabase/cli/releases) when you need `supabase start` for local dev.
 - Review `.env.example` and create `.env` with your Supabase project URL and anon key.
 - `npm run dev` to start the Astro dev server.

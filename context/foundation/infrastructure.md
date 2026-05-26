@@ -20,14 +20,14 @@ The project already runs Astro 6 SSR with `@astrojs/cloudflare@13.5.0` — the a
 
 ## Platform Comparison
 
-| Platform | CLI-first | Managed/Serverless | Agent docs | Stable deploy API | MCP | Total |
-|---|---|---|---|---|---|---|
-| **Cloudflare** | Pass | Pass | Pass | Pass | Pass | **10/10** |
-| Vercel | Pass | Pass | Pass | Pass | Pass | **10/10** |
-| Railway | Pass | Pass | Pass | Partial | Pass | **9/10** |
-| Render | Pass | Pass | Partial | Pass | Pass | **9/10** |
-| Fly.io | Partial | Partial | Partial | Partial | Fail | **5/10** |
-| ~~Netlify~~ | — | — | — | — | — | **DROP** |
+| Platform       | CLI-first | Managed/Serverless | Agent docs | Stable deploy API | MCP  | Total     |
+| -------------- | --------- | ------------------ | ---------- | ----------------- | ---- | --------- |
+| **Cloudflare** | Pass      | Pass               | Pass       | Pass              | Pass | **10/10** |
+| Vercel         | Pass      | Pass               | Pass       | Pass              | Pass | **10/10** |
+| Railway        | Pass      | Pass               | Pass       | Partial           | Pass | **9/10**  |
+| Render         | Pass      | Pass               | Partial    | Pass              | Pass | **9/10**  |
+| Fly.io         | Partial   | Partial            | Partial    | Partial           | Fail | **5/10**  |
+| ~~Netlify~~    | —         | —                  | —          | —                 | —    | **DROP**  |
 
 **Netlify dropped (hard filter):** `@astrojs/netlify@6.1.0` declares `peerDependencies: { "astro": "^5.0.0" }` — does not support Astro 6. Using it would require downgrading Astro or waiting for adapter update.
 
@@ -38,6 +38,7 @@ The project already runs Astro 6 SSR with `@astrojs/cloudflare@13.5.0` — the a
 **Agent docs notes:** Render has no `llms.txt` and docs are not open-sourced as markdown. Fly.io has docs on GitHub as markdown but `llms.txt` returns 404.
 
 **Soft weights applied (interview answers):**
+
 - Q2 (minimize cost): Fly.io dropped to bottom (no free tier). Railway at $5/month minimum. Render free tier has 60-second cold starts that break UX.
 - Q3 (Cloudflare familiarity): broke the 10/10 tie between Cloudflare and Vercel in favor of Cloudflare.
 - Q4 (single region fine): no effect — all platforms work for single-region.
@@ -107,42 +108,49 @@ The incorrect assumption throughout: that "it works in dev" meant "it works in p
 
 ## Risk Register
 
-| Risk | Source | Likelihood | Impact | Mitigation |
-|---|---|---|---|---|
-| 10ms CPU limit exceeded by Astro SSR on free tier | Devil's advocate | High | High | Run `wrangler tail` in production and monitor CPU time. If p95 >8ms, upgrade to paid Workers ($5/month). Budget this as likely. |
-| AI library uses `node:fs` or Node-only internals; breaks silently in workerd | Devil's advocate | Medium | High | Audit every new AI/utility dependency with `npx wrangler dev` before committing. Check for `node:fs`, `child_process`, `os` usage. |
-| `process.env` access in third-party library returns `undefined` | Devil's advocate | Medium | Medium | Wrap all third-party client initialization in explicit env-var injection rather than relying on `process.env`. Add a startup check that throws if required vars are undefined. |
-| Workers bundle exceeds 3MB free-tier limit | Devil's advocate | Medium | High | After each significant dependency addition, run `du -sh dist/_worker.js`. Set a CI check that fails if bundle >2.8MB to give headroom. |
-| React 19 hydration broken by Cloudflare Auto Minify dashboard setting | Devil's advocate | Low | High | Document "disable Auto Minify" as a required setup step. Add to AGENTS.md. Verify after any Cloudflare dashboard change. |
-| `workerd` runtime divergence causes prod-only bugs invisible in dev | Pre-mortem | Medium | High | Always test with `wrangler dev` (workerd runtime), not just `astro dev` (Node), before deploying AI-related features. |
-| Pages deploy vs Workers deploy confusion on first production push | Unknown unknowns | High | Medium | Decide on deployment model before first push: use `wrangler deploy` (Workers + Static Assets, recommended for Astro 6), not `wrangler pages deploy`. Document in AGENTS.md. |
-| Dual env-var access pattern (`astro:env` vs `locals.runtime.env`) causes misconfiguration | Unknown unknowns | Medium | Medium | Add a comment in `src/lib/supabase.ts` explaining which system to use for which type of config. Bindings: `locals.runtime.env`. Plain secrets: `astro:env/server`. |
+| Risk                                                                                      | Source           | Likelihood | Impact | Mitigation                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------- | ---------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 10ms CPU limit exceeded by Astro SSR on free tier                                         | Devil's advocate | High       | High   | Run `wrangler tail` in production and monitor CPU time. If p95 >8ms, upgrade to paid Workers ($5/month). Budget this as likely.                                                |
+| AI library uses `node:fs` or Node-only internals; breaks silently in workerd              | Devil's advocate | Medium     | High   | Audit every new AI/utility dependency with `npx wrangler dev` before committing. Check for `node:fs`, `child_process`, `os` usage.                                             |
+| `process.env` access in third-party library returns `undefined`                           | Devil's advocate | Medium     | Medium | Wrap all third-party client initialization in explicit env-var injection rather than relying on `process.env`. Add a startup check that throws if required vars are undefined. |
+| Workers bundle exceeds 3MB free-tier limit                                                | Devil's advocate | Medium     | High   | After each significant dependency addition, run `du -sh dist/_worker.js`. Set a CI check that fails if bundle >2.8MB to give headroom.                                         |
+| React 19 hydration broken by Cloudflare Auto Minify dashboard setting                     | Devil's advocate | Low        | High   | Document "disable Auto Minify" as a required setup step. Add to AGENTS.md. Verify after any Cloudflare dashboard change.                                                       |
+| `workerd` runtime divergence causes prod-only bugs invisible in dev                       | Pre-mortem       | Medium     | High   | Always test with `wrangler dev` (workerd runtime), not just `astro dev` (Node), before deploying AI-related features.                                                          |
+| Pages deploy vs Workers deploy confusion on first production push                         | Unknown unknowns | High       | Medium | Decide on deployment model before first push: use `wrangler deploy` (Workers + Static Assets, recommended for Astro 6), not `wrangler pages deploy`. Document in AGENTS.md.    |
+| Dual env-var access pattern (`astro:env` vs `locals.runtime.env`) causes misconfiguration | Unknown unknowns | Medium     | Medium | Add a comment in `src/lib/supabase.ts` explaining which system to use for which type of config. Bindings: `locals.runtime.env`. Plain secrets: `astro:env/server`.             |
 
 ## Getting Started
 
 1. **Verify deployment model** — the repo uses `wrangler.jsonc` (Workers format). Deploy with:
+
    ```bash
    npm run build
    npx wrangler deploy
    ```
+
    Do **not** use `wrangler pages deploy` — it ignores `wrangler.jsonc` and deploys to the wrong Cloudflare product.
 
 2. **Push secrets to Cloudflare:**
+
    ```bash
    echo "your-supabase-url" | npx wrangler secret put SUPABASE_URL
    echo "your-supabase-anon-key" | npx wrangler secret put SUPABASE_KEY
    ```
 
 3. **Verify bundle size before each deploy:**
+
    ```bash
    npm run build && Get-Item dist/_worker.js | Select-Object -ExpandProperty Length
    ```
+
    If output >3,000,000 bytes (3MB), the free plan will reject the deploy — upgrade to paid or reduce bundle.
 
 4. **Set up log tailing for post-deploy validation:**
+
    ```bash
    npx wrangler tail --status error
    ```
+
    Run this for 10 minutes after first production deploy. If you see 1101 errors, SSR CPU is exceeding the 10ms limit.
 
 5. **Disable Cloudflare Auto Minify** in the Cloudflare dashboard: Speed → Optimization → Content Optimization → Auto Minify → uncheck all three boxes (HTML, CSS, JS). Required to prevent React 19 hydration errors.
@@ -150,6 +158,7 @@ The incorrect assumption throughout: that "it works in dev" meant "it works in p
 ## Out of Scope
 
 The following were not evaluated in this research:
+
 - Docker image configuration
 - CI/CD pipeline setup (GitHub Actions workflows for `wrangler deploy`)
 - Production-scale architecture (multi-region, HA, Cloudflare Enterprise Data Localization)

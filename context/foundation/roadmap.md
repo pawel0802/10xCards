@@ -27,22 +27,22 @@ top_blocker: time
 
 ## At a glance
 
-| ID   | Change ID                | Outcome (użytkownik może …)                                                                                             | Prerequisites | PRD refs                                              | Status   |
-|------|--------------------------|-------------------------------------------------------------------------------------------------------------------------|---------------|-------------------------------------------------------|----------|
-| F-01 | flashcard-data-schema    | (foundation) tabele flashcards i review_logs gotowe w Supabase z RLS; typy TypeScript dostępne w src/types.ts           | —             | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, NFR (prywatność) | ready    |
-| S-01 | ai-generation-and-review | wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna       | F-01          | FR-002, FR-003, US-01                                 | proposed |
-| S-02 | manual-card-creation     | ręcznie stworzyć fiszkę z pytaniem i odpowiedzią                                                                        | F-01          | FR-004                                                | proposed |
-| S-03 | card-management          | przeglądać pełną listę swoich fiszek, edytować treść dowolnej fiszki lub ją usunąć                                      | F-01          | FR-005                                                | proposed |
-| S-04 | spaced-repetition-review | rozpocząć i ukończyć sesję powtórek spaced repetition, z kartami zaplanowanymi przez algorytm SR na podstawie wyników   | S-01          | FR-006                                                | proposed |
+| ID   | Change ID                | Outcome (użytkownik może …)                                                                                           | Prerequisites | PRD refs                                                         | Status   |
+| ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- | -------- |
+| F-01 | flashcard-data-schema    | (foundation) tabele flashcards i review_logs gotowe w Supabase z RLS; typy TypeScript dostępne w src/types.ts         | —             | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, NFR (prywatność) | ready    |
+| S-01 | ai-generation-and-review | wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna     | F-01          | FR-002, FR-003, US-01                                            | proposed |
+| S-02 | manual-card-creation     | ręcznie stworzyć fiszkę z pytaniem i odpowiedzią                                                                      | F-01          | FR-004                                                           | proposed |
+| S-03 | card-management          | przeglądać pełną listę swoich fiszek, edytować treść dowolnej fiszki lub ją usunąć                                    | F-01          | FR-005                                                           | proposed |
+| S-04 | spaced-repetition-review | rozpocząć i ukończyć sesję powtórek spaced repetition, z kartami zaplanowanymi przez algorytm SR na podstawie wyników | S-01          | FR-006                                                           | proposed |
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme              | Chain                     | Note                                                                        |
-|--------|--------------------|---------------------------|-----------------------------------------------------------------------------|
-| A      | Ścieżka krytyczna  | `F-01` → `S-01` → `S-04`  | Sekwencja bezpośrednio prowadząca do gwiazdy przewodniej; główna oś dla celu `speed`. |
-| B      | Prace równoległe   | `S-02` / `S-03`            | Oba wymagają F-01 (Stream A); realizowane równolegle z S-01.               |
+| Stream | Theme             | Chain                    | Note                                                                                  |
+| ------ | ----------------- | ------------------------ | ------------------------------------------------------------------------------------- |
+| A      | Ścieżka krytyczna | `F-01` → `S-01` → `S-04` | Sekwencja bezpośrednio prowadząca do gwiazdy przewodniej; główna oś dla celu `speed`. |
+| B      | Prace równoległe  | `S-02` / `S-03`          | Oba wymagają F-01 (Stream A); realizowane równolegle z S-01.                          |
 
 ## Baseline
 
@@ -126,13 +126,13 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                | Suggested issue title                         | Ready for `/10x-plan` | Notes                                  |
-|------------|--------------------------|-----------------------------------------------|-----------------------|----------------------------------------|
-| F-01       | flashcard-data-schema    | Define flashcard and review schema with RLS   | yes                   | Run `/10x-plan flashcard-data-schema`  |
-| S-01       | ai-generation-and-review | AI flashcard generation and candidate review  | no                    | Needs F-01 done first                  |
-| S-02       | manual-card-creation     | Manual flashcard creation form                | no                    | Needs F-01 done first                  |
-| S-03       | card-management          | Flashcard list, edit, and delete              | no                    | Needs F-01 done first                  |
-| S-04       | spaced-repetition-review | Spaced repetition review session              | no                    | Needs S-01 done first                  |
+| Roadmap ID | Change ID                | Suggested issue title                        | Ready for `/10x-plan` | Notes                                 |
+| ---------- | ------------------------ | -------------------------------------------- | --------------------- | ------------------------------------- |
+| F-01       | flashcard-data-schema    | Define flashcard and review schema with RLS  | yes                   | Run `/10x-plan flashcard-data-schema` |
+| S-01       | ai-generation-and-review | AI flashcard generation and candidate review | no                    | Needs F-01 done first                 |
+| S-02       | manual-card-creation     | Manual flashcard creation form               | no                    | Needs F-01 done first                 |
+| S-03       | card-management          | Flashcard list, edit, and delete             | no                    | Needs F-01 done first                 |
+| S-04       | spaced-repetition-review | Spaced repetition review session             | no                    | Needs S-01 done first                 |
 
 ## Open Roadmap Questions
 

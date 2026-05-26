@@ -52,31 +52,39 @@ Login required — email + password or OAuth. Flat user model: every authenticat
 ## Success Criteria
 
 ### Primary
+
 - The end-to-end flow works: user signs up → pastes text → AI generates flashcard candidates → user reviews/edits/accepts cards → user completes a spaced repetition review session.
 - ≥ 75% of AI-generated cards are accepted by the user without edits (quality bar for AI generation).
 
 ### Secondary
+
 - ≥ 75% of all flashcards created by users originate from AI generation (not manual entry).
 
 ### Guardrails
+
 - No data loss: accepted flashcards persist reliably across sessions.
 - User data privacy: flashcard content and personal data are not exposed to other users or third parties beyond what the AI generation call requires.
 
 ## Functional Requirements
 
 - FR-001: User can register and log in. Priority: must-have
+
   > Socrates: Counter-argument considered: "auth adds friction that kills early user acquisition — anonymous use first would be better." Resolution: kept; auth is needed on day one to prevent data loss when users accumulate cards across sessions.
 
 - FR-002: User can paste raw text and trigger AI flashcard generation. Priority: must-have
+
   > Socrates: Counter-argument considered: "AI quality may be inconsistent — bad output trains users to distrust and abandon the AI flow." Resolution: kept; this is the core risk to manage through the review step (FR-003) and the 75% acceptance-rate success criterion.
 
 - FR-003: User can review AI-generated card candidates — accept, edit, or discard each. Priority: must-have
+
   > Socrates: Counter-argument considered: "review step adds friction — bulk-accept-all would be faster." Resolution: kept; the review step is how users build trust in AI output quality, which is load-bearing for the 75% acceptance target.
 
 - FR-004: User can manually create a flashcard. Priority: must-have
+
   > Socrates: Counter-argument considered: "manual creation dilutes the AI value proposition." Resolution: kept; manual creation is a safety net for cards AI missed or got wrong, not a competing flow.
 
 - FR-005: User can view, edit, and delete their flashcards. Priority: must-have
+
   > Socrates: Counter-argument considered: "edit/delete post-acceptance adds scope — just accept/discard at review time is enough for MVP." Resolution: kept; post-acceptance editing is essential for long-term card quality maintenance.
 
 - FR-006: User can start and complete a spaced repetition review session. Priority: must-have
@@ -91,6 +99,7 @@ Login required — email + password or OAuth. Flat user model: every authenticat
 - **Then** they see a set of AI-generated flashcard candidates they can accept, edit, or discard
 
 #### Acceptance Criteria
+
 - AI returns at least one card candidate for any non-trivial text input
 - Each candidate is individually accept/edit/discard-able before being saved
 - Accepted cards are immediately available in the user's card list

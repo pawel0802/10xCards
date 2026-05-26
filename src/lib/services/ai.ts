@@ -2,7 +2,7 @@ function getEnvVar(name: string): string | undefined {
   try {
     // Astro SSR runtime — loaded dynamically to avoid breaking non-Astro environments
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return (require('astro:env/server') as Record<string, string>)[name];
+    return (require("astro:env/server") as Record<string, string>)[name];
   } catch {
     return process.env[name];
   }
@@ -14,31 +14,31 @@ export interface FlashcardCandidate {
 }
 
 export async function generateFlashcardsFromText(text: string): Promise<FlashcardCandidate[]> {
-  const apiKey = getEnvVar('OPENROUTER_API_KEY');
-  const model = getEnvVar('OPENROUTER_MODEL') ?? 'gpt-4.1';
+  const apiKey = getEnvVar("OPENROUTER_API_KEY");
+  const model = getEnvVar("OPENROUTER_MODEL") ?? "gpt-4.1";
 
   if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not set in environment variables.');
+    throw new Error("OPENROUTER_API_KEY is not set in environment variables.");
   }
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model,
       messages: [
         {
-          role: 'system',
+          role: "system",
           content:
-            'You are an expert at creating spaced repetition flashcards. ' +
+            "You are an expert at creating spaced repetition flashcards. " +
             'Always respond with a valid JSON array of objects, each with "front" and "back" string fields. ' +
-            'No markdown, no explanation — only the JSON array.',
+            "No markdown, no explanation — only the JSON array.",
         },
         {
-          role: 'user',
+          role: "user",
           content: `Generate flashcards from the following text:\n${text}`,
         },
       ],
@@ -51,7 +51,7 @@ export async function generateFlashcardsFromText(text: string): Promise<Flashcar
   }
 
   const data = await response.json();
-  const content: string = data?.choices?.[0]?.message?.content ?? '';
+  const content: string = data?.choices?.[0]?.message?.content ?? "";
 
   let parsed: unknown;
   try {
@@ -65,12 +65,12 @@ export async function generateFlashcardsFromText(text: string): Promise<Flashcar
     !parsed.every(
       (item) =>
         item !== null &&
-        typeof item === 'object' &&
-        typeof (item as Record<string, unknown>).front === 'string' &&
-        typeof (item as Record<string, unknown>).back === 'string',
+        typeof item === "object" &&
+        typeof (item as Record<string, unknown>).front === "string" &&
+        typeof (item as Record<string, unknown>).back === "string",
     )
   ) {
-    throw new Error('AI response did not match expected flashcard format.');
+    throw new Error("AI response did not match expected flashcard format.");
   }
 
   return parsed as FlashcardCandidate[];

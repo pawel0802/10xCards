@@ -10,6 +10,7 @@ archived_at: null
 ## Notes
 
 użytkownik może wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna; zaakceptowane fiszki trafiają natychmiast na listę.
+
 - PRD refs: FR-002, FR-003, US-01
 - Prerequisites: F-01
 - Blockers: —

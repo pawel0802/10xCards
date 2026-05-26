@@ -31,15 +31,15 @@ npx wrangler whoami  # verify auth
 
 ### Gaps found vs. infrastructure.md recommendations
 
-| # | Gap | Status | Resolution |
-|---|-----|--------|------------|
-| G1 | `wrangler.jsonc` name was `"10x-astro-starter"` (starter default) | ✅ Fixed | Renamed to `"10x-cards"` |
-| G2 | No Cloudflare API token for CI | ✅ Fixed | Token generated, added as `CLOUDFLARE_API_TOKEN` repo secret |
-| G3 | CI workflow had no deploy step | ✅ Fixed | `.github/workflows/deploy.yml` added |
-| G4 | No bundle size guard in CI | ✅ Fixed | Bundle check added to `deploy.yml` |
-| G5 | Cloudflare Auto Minify not documented as disabled | ✅ Documented | See Phase 5 — required after custom domain attached |
-| G6 | Supabase secrets not yet in Cloudflare Vault | ✅ Fixed | Pushed via `wrangler secret put` |
-| G7 | SESSION KV binding auto-provisioned without id | ✅ Fixed | `wrangler.jsonc` updated with `id: 940493403a3a41c18e04383935e9e05a` |
+| #   | Gap                                                               | Status        | Resolution                                                           |
+| --- | ----------------------------------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| G1  | `wrangler.jsonc` name was `"10x-astro-starter"` (starter default) | ✅ Fixed      | Renamed to `"10x-cards"`                                             |
+| G2  | No Cloudflare API token for CI                                    | ✅ Fixed      | Token generated, added as `CLOUDFLARE_API_TOKEN` repo secret         |
+| G3  | CI workflow had no deploy step                                    | ✅ Fixed      | `.github/workflows/deploy.yml` added                                 |
+| G4  | No bundle size guard in CI                                        | ✅ Fixed      | Bundle check added to `deploy.yml`                                   |
+| G5  | Cloudflare Auto Minify not documented as disabled                 | ✅ Documented | See Phase 5 — required after custom domain attached                  |
+| G6  | Supabase secrets not yet in Cloudflare Vault                      | ✅ Fixed      | Pushed via `wrangler secret put`                                     |
+| G7  | SESSION KV binding auto-provisioned without id                    | ✅ Fixed      | `wrangler.jsonc` updated with `id: 940493403a3a41c18e04383935e9e05a` |
 
 ---
 
@@ -125,6 +125,7 @@ npx wrangler deploy
 ```
 
 **First deploy output:**
+
 ```
 Total Upload: 1919.97 KiB / gzip: 392.75 KiB
 Uploaded 10x-cards (16.47 sec)
@@ -143,11 +144,11 @@ Current Version ID: c0564ad0-0f08-429d-b5a9-5d56c193074b
 
 URL to test: **https://10x-cards.pawel0802.workers.dev**
 
-| Route | Expected |
-|-------|----------|
-| `/` | 200 or redirect to `/auth/signin` |
-| `/auth/signin` | 200 — sign-in form |
-| `/auth/signup` | 200 — sign-up form |
+| Route          | Expected                          |
+| -------------- | --------------------------------- |
+| `/`            | 200 or redirect to `/auth/signin` |
+| `/auth/signin` | 200 — sign-in form                |
+| `/auth/signup` | 200 — sign-up form                |
 
 ### 5.2 Error monitoring
 
@@ -160,6 +161,7 @@ npx wrangler tail --status error
 ```
 
 Watch for:
+
 - **Error 1101** → CPU timeout (10ms free tier limit). Fix: upgrade to Workers Paid ($5/month).
 - **500 errors** → Supabase client misconfiguration or missing secrets.
 
@@ -247,13 +249,13 @@ npx wrangler rollback <VERSION_ID>  # roll back to specific version
 
 ## Risk Mitigations
 
-| Risk | Status | Mitigation |
-|------|--------|------------|
-| 10ms CPU limit on free tier | ⚠️ Monitor | Check Cloudflare Dashboard logs; upgrade to paid ($5/month) if 1101 errors appear |
-| Workers bundle >3MB | ✅ Guarded | Bundle check in Phase 3 (manual) and `deploy.yml` (CI) |
-| React 19 hydration broken by Auto Minify | ✅ Documented | Phase 5.3 — disable after custom domain attached |
-| SESSION KV namespace conflict on deploy | ✅ Fixed | KV `id` committed to `wrangler.jsonc` |
-| `wrangler` failing on corporate network | ✅ Documented | Use `$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"` + API token |
+| Risk                                     | Status        | Mitigation                                                                        |
+| ---------------------------------------- | ------------- | --------------------------------------------------------------------------------- |
+| 10ms CPU limit on free tier              | ⚠️ Monitor    | Check Cloudflare Dashboard logs; upgrade to paid ($5/month) if 1101 errors appear |
+| Workers bundle >3MB                      | ✅ Guarded    | Bundle check in Phase 3 (manual) and `deploy.yml` (CI)                            |
+| React 19 hydration broken by Auto Minify | ✅ Documented | Phase 5.3 — disable after custom domain attached                                  |
+| SESSION KV namespace conflict on deploy  | ✅ Fixed      | KV `id` committed to `wrangler.jsonc`                                             |
+| `wrangler` failing on corporate network  | ✅ Documented | Use `$env:NODE_TLS_REJECT_UNAUTHORIZED = "0"` + API token                         |
 
 ---
 
