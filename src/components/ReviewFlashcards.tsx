@@ -38,22 +38,46 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       }
     };
     window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
+    return () => {
+      window.removeEventListener("beforeunload", handler);
+    };
   }, [hasChanges]);
 
-  const handleAccept = (id: string) => {
-    setCandidates(candidates.map((c) => (c.id === id ? { ...c, status: "accepted" } : c)));
+  // Accept and save immediately
+  const handleAccept = async (id: string) => {
+    setCandidates((prev) => prev.map((c) => (c.id === id ? { ...c, status: "accepted" } : c)));
     setHasChanges(true);
+    setLoading(true);
+    setError(null);
+    const card = candidates.find((c) => c.id === id);
+    if (!card) return;
+    try {
+      const res = await fetch("/api/save-flashcards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cards: [{ front: card.front, back: card.back }] }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Unknown error");
+      }
+      setHasChanges(false);
+    } catch (e) {
+      setError("Failed to save card. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+
   const handleReject = (id: string) => {
     setCandidates(candidates.map((c) => (c.id === id ? { ...c, status: "rejected" } : c)));
     setHasChanges(true);
   };
   const handleEdit = (id: string, front: string, back: string) => {
-      setCandidates(candidates.map((c) => (c.id === id ? { ...c, front, back, status: "edited" } : c)));
-      setHasChanges(true);
-    };
-
+    setCandidates(candidates.map((c) => (c.id === id ? { ...c, front, back, status: "edited" } : c)));
+    setHasChanges(true);
+  };
 
   // Save accepted/edited cards to backend
   const handleSubmit = async () => {
@@ -96,6 +120,19 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
   return (
     <div className="px-4 py-8">
       <h2 className="mb-4 text-xl font-bold">Flashcard Review</h2>
+      {candidates.length > 0 && currentIdx < candidates.length && (
+        <div className="mb-4 flex items-center gap-4">
+          <div className="text-sm text-gray-700">
+            Card {currentIdx + 1} of {candidates.length}
+          </div>
+          <div className="flex-1 h-2 bg-gray-200 rounded">
+            <div
+              className="h-2 bg-blue-500 rounded"
+              style={{ width: `${((currentIdx + 1) / candidates.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
@@ -105,13 +142,17 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           <input
             className="mb-2 block w-full rounded border px-2 py-1"
             value={candidates[currentIdx].front}
-            onChange={e => handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back)}
+            onChange={(e) => {
+              handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back);
+            }}
             disabled={candidates[currentIdx].status === "rejected"}
           />
           <input
             className="mb-2 block w-full rounded border px-2 py-1"
             value={candidates[currentIdx].back}
-            onChange={e => handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value)}
+            onChange={(e) => {
+              handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value);
+            }}
             disabled={candidates[currentIdx].status === "rejected"}
           />
           <div className="flex gap-2">
@@ -121,8 +162,11 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
                 "rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
                 candidates[currentIdx].status === "accepted" && "bg-green-600",
               )}
-              onClick={() => { handleAccept(candidates[currentIdx].id); setCurrentIdx(idx => idx + 1); }}
-              disabled={candidates[currentIdx].status === "accepted"}
+              onClick={async () => {
+                await handleAccept(candidates[currentIdx].id);
+                setCurrentIdx((idx) => idx + 1);
+              }}
+              disabled={loading || candidates[currentIdx].status === "accepted"}
             >
               Accept
             </button>
@@ -132,7 +176,10 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
                 "rounded bg-gray-200 px-4 py-2 text-gray-800 transition hover:bg-gray-300",
                 candidates[currentIdx].status === "rejected" && "bg-red-600 text-white",
               )}
-              onClick={() => { handleReject(candidates[currentIdx].id); setCurrentIdx(idx => idx + 1); }}
+              onClick={() => {
+                handleReject(candidates[currentIdx].id);
+                setCurrentIdx((idx) => idx + 1);
+              }}
               disabled={candidates[currentIdx].status === "rejected"}
             >
               Reject
@@ -140,15 +187,15 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           </div>
         </div>
       )}
-   {currentIdx >= candidates.length && (
-     <button
-       className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-       onClick={handleSubmit}
-       disabled={loading || !hasChanges}
-     >
-       Save accepted flashcards
-     </button>
-   )}
-   </div>
+      {currentIdx >= candidates.length && (
+        <button
+          className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+          onClick={handleSubmit}
+          disabled={loading || !hasChanges}
+        >
+          Save accepted flashcards
+        </button>
+      )}
+    </div>
   );
 }

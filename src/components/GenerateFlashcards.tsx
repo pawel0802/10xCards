@@ -5,7 +5,13 @@ export default function GenerateFlashcards() {
   const [candidates] = useState<{ id: string; front: string; back: string }[]>([]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = typeof window !== "undefined" ? (window as any).navigate || ((url: string) => { window.location.href = url; }) : () => {};
+  const navigate =
+    typeof window !== "undefined"
+      ? (window as any).navigate ||
+        ((url: string) => {
+          window.location.href = url;
+        })
+      : () => {};
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -22,14 +28,14 @@ export default function GenerateFlashcards() {
       }
       const data = await res.json();
       const generated = (data.flashcards as { front: string; back: string }[]).map((c, i) => ({
-  id: String(Date.now()) + "-" + i,
-  front: c.front,
-  back: c.back,
-}));
-try {
-  localStorage.setItem("reviewCandidates", JSON.stringify(generated));
-} catch {}
-setTimeout(() => navigate("/review"), 500);
+        id: String(Date.now()) + "-" + i,
+        front: c.front,
+        back: c.back,
+      }));
+      try {
+        localStorage.setItem("reviewCandidates", JSON.stringify(generated));
+      } catch {}
+      setTimeout(() => navigate("/review"), 500);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate flashcards");
     } finally {
@@ -43,19 +49,22 @@ setTimeout(() => navigate("/review"), 500);
       <textarea
         className="mb-2 block w-full rounded border px-2 py-1"
         rows={4}
-        placeholder="Paste text to generate flashcards..."
+        placeholder="Paste text to generate flashcards... (minimum 50 characters)"
         value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+        onChange={(e) => {
+          setInputText(e.target.value);
+        }}
         disabled={generating}
       />
+      <div className="mb-2 text-sm text-gray-600">
+        Minimum input length: 50 characters. Please paste at least 50 characters of text to enable flashcard generation.
+      </div>
       <button
-        className={`mb-6 rounded px-4 py-2 text-white transition
-          ${generating || !inputText.trim()
-            ? "bg-blue-300 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"}
-        `}
+        className={`mb-6 rounded px-4 py-2 text-white transition ${
+          generating || inputText.trim().length < 50 ? "cursor-not-allowed bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
+        } `}
         onClick={handleGenerate}
-        disabled={generating || !inputText.trim()}
+        disabled={generating || inputText.trim().length < 50}
       >
         {generating ? "Generating..." : "Generate flashcards"}
       </button>
