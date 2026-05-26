@@ -139,31 +139,25 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
         <div>Review complete! All cards processed.</div>
       ) : (
         <div className="rounded border p-4">
-          <input
-            className="mb-2 block w-full rounded border px-2 py-1"
-            value={
-              candidates[currentIdx].front.length > 150
-                ? candidates[currentIdx].front.slice(0, 150) + "..."
-                : candidates[currentIdx].front
-            }
+          <textarea
+            className="mb-2 block w-full rounded border px-2 py-1 resize-y min-h-[60px]"
+            value={candidates[currentIdx].front}
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
-            maxLength={150}
+            rows={Math.max(2, Math.ceil(candidates[currentIdx].front.length / 60))}
+            style={{ minHeight: '60px' }}
           />
-          <input
-            className="mb-2 block w-full rounded border px-2 py-1"
-            value={
-              candidates[currentIdx].back.length > 150
-                ? candidates[currentIdx].back.slice(0, 150) + "..."
-                : candidates[currentIdx].back
-            }
+          <textarea
+            className="mb-2 block w-full rounded border px-2 py-1 resize-y min-h-[60px]"
+            value={candidates[currentIdx].back}
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
-            maxLength={150}
+            rows={Math.max(2, Math.ceil(candidates[currentIdx].back.length / 60))}
+            style={{ minHeight: '60px' }}
           />
           <div className="flex gap-2">
             <button
