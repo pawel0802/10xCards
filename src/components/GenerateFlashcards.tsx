@@ -56,9 +56,6 @@ export default function GenerateFlashcards() {
         }}
         disabled={generating}
       />
-      <div className="mb-2 text-sm text-gray-600">
-        Minimum input length: 50 characters. Please paste at least 50 characters of text to enable flashcard generation.
-      </div>
       <button
         className={`mb-6 rounded px-4 py-2 text-white transition ${
           generating || inputText.trim().length < 50 ? "cursor-not-allowed bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
