@@ -141,19 +141,29 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
         <div className="rounded border p-4">
           <input
             className="mb-2 block w-full rounded border px-2 py-1"
-            value={candidates[currentIdx].front}
+            value={
+              candidates[currentIdx].front.length > 150
+                ? candidates[currentIdx].front.slice(0, 150) + "..."
+                : candidates[currentIdx].front
+            }
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
+            maxLength={150}
           />
           <input
             className="mb-2 block w-full rounded border px-2 py-1"
-            value={candidates[currentIdx].back}
+            value={
+              candidates[currentIdx].back.length > 150
+                ? candidates[currentIdx].back.slice(0, 150) + "..."
+                : candidates[currentIdx].back
+            }
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
+            maxLength={150}
           />
           <div className="flex gap-2">
             <button
@@ -190,10 +200,14 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {currentIdx >= candidates.length && (
         <button
           className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-          onClick={handleSubmit}
-          disabled={loading || !hasChanges}
+          onClick={() => {
+            // TODO: Replace with real dashboard navigation
+            if (typeof window !== "undefined") {
+              window.location.href = "/dashboard";
+            }
+          }}
         >
-          Save accepted flashcards
+          Show your flashcards
         </button>
       )}
     </div>
