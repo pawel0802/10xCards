@@ -13,7 +13,18 @@ interface ReviewFlashcardsProps {
 }
 
 export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcardsProps) {
-  const [candidates, setCandidates] = useState(initialCandidates);
+  const [candidates, setCandidates] = useState<FlashcardCandidate[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("reviewCandidates");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {}
+      }
+    }
+    return initialCandidates;
+  });
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -39,9 +50,10 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
     setHasChanges(true);
   };
   const handleEdit = (id: string, front: string, back: string) => {
-    setCandidates(candidates.map((c) => (c.id === id ? { ...c, front, back, status: "edited" } : c)));
-    setHasChanges(true);
-  };
+      setCandidates(candidates.map((c) => (c.id === id ? { ...c, front, back, status: "edited" } : c)));
+      setHasChanges(true);
+    };
+
 
   // Save accepted/edited cards to backend
   const handleSubmit = async () => {
@@ -84,55 +96,59 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
   return (
     <div className="px-4 py-8">
       <h2 className="mb-4 text-xl font-bold">Flashcard Review</h2>
-      <ul className="space-y-4">
-        {candidates.map((card) => (
-          <li key={card.id} className={cn("rounded border p-4", card.status === "rejected" && "opacity-50")}>
-            <input
-              className="mb-2 block w-full rounded border px-2 py-1"
-              value={card.front}
-              onChange={(e) => handleEdit(card.id, e.target.value, card.back)}
-              disabled={card.status === "rejected"}
-            />
-            <input
-              className="mb-2 block w-full rounded border px-2 py-1"
-              value={card.back}
-              onChange={(e) => handleEdit(card.id, card.front, e.target.value)}
-              disabled={card.status === "rejected"}
-            />
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className={cn(
-                  "rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
-                  card.status === "accepted" && "bg-green-600",
-                )}
-                onClick={() => handleAccept(card.id)}
-                disabled={card.status === "accepted"}
-              >
-                Accept
-              </button>
-              <button
-                type="button"
-                className={cn(
-                  "rounded bg-gray-200 px-4 py-2 text-gray-800 transition hover:bg-gray-300",
-                  card.status === "rejected" && "bg-red-600 text-white",
-                )}
-                onClick={() => handleReject(card.id)}
-                disabled={card.status === "rejected"}
-              >
-                Reject
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <button
-        className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-        onClick={handleSubmit}
-        disabled={loading || !hasChanges}
-      >
-        Save accepted flashcards
-      </button>
-    </div>
+      {candidates.length === 0 ? (
+        <div>No flashcards to review.</div>
+      ) : currentIdx >= candidates.length ? (
+        <div>Review complete! All cards processed.</div>
+      ) : (
+        <div className="rounded border p-4">
+          <input
+            className="mb-2 block w-full rounded border px-2 py-1"
+            value={candidates[currentIdx].front}
+            onChange={e => handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back)}
+            disabled={candidates[currentIdx].status === "rejected"}
+          />
+          <input
+            className="mb-2 block w-full rounded border px-2 py-1"
+            value={candidates[currentIdx].back}
+            onChange={e => handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value)}
+            disabled={candidates[currentIdx].status === "rejected"}
+          />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={cn(
+                "rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
+                candidates[currentIdx].status === "accepted" && "bg-green-600",
+              )}
+              onClick={() => { handleAccept(candidates[currentIdx].id); setCurrentIdx(idx => idx + 1); }}
+              disabled={candidates[currentIdx].status === "accepted"}
+            >
+              Accept
+            </button>
+            <button
+              type="button"
+              className={cn(
+                "rounded bg-gray-200 px-4 py-2 text-gray-800 transition hover:bg-gray-300",
+                candidates[currentIdx].status === "rejected" && "bg-red-600 text-white",
+              )}
+              onClick={() => { handleReject(candidates[currentIdx].id); setCurrentIdx(idx => idx + 1); }}
+              disabled={candidates[currentIdx].status === "rejected"}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      )}
+   {currentIdx >= candidates.length && (
+     <button
+       className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+       onClick={handleSubmit}
+       disabled={loading || !hasChanges}
+     >
+       Save accepted flashcards
+     </button>
+   )}
+   </div>
   );
 }

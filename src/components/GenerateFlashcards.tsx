@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export default function GenerateFlashcards() {
   const [inputText, setInputText] = useState("");
-  const [candidates, setCandidates] = useState<{ id: string; front: string; back: string }[]>([]);
+  const [candidates] = useState<{ id: string; front: string; back: string }[]>([]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = typeof window !== "undefined" ? (window as any).navigate || ((url: string) => { window.location.href = url; }) : () => {};
@@ -21,15 +21,15 @@ export default function GenerateFlashcards() {
         throw new Error(data.error || "Unknown error");
       }
       const data = await res.json();
-      setCandidates(
-        (data.flashcards as { front: string; back: string }[]).map((c, i) => ({
-          id: String(Date.now()) + "-" + i,
-          front: c.front,
-          back: c.back,
-        })),
-      );
-      // Redirect to /review after generation
-      setTimeout(() => navigate("/review"), 500);
+      const generated = (data.flashcards as { front: string; back: string }[]).map((c, i) => ({
+  id: String(Date.now()) + "-" + i,
+  front: c.front,
+  back: c.back,
+}));
+try {
+  localStorage.setItem("reviewCandidates", JSON.stringify(generated));
+} catch {}
+setTimeout(() => navigate("/review"), 500);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate flashcards");
     } finally {
