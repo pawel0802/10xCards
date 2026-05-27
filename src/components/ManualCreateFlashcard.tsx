@@ -67,18 +67,56 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
         />
         <div className="text-xs text-gray-500">{back.length}/300</div>
       </div>
-      {error && <div className="text-red-500">{error}</div>}
-      {success && <div className="text-green-600">Card created!</div>}
-      <button
-        type="submit"
-        className={cn(
-          "rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700",
-          (!isValid || submitting) && "bg-green-300 cursor-not-allowed"
-        )}
-        disabled={!isValid || submitting}
-      >
-        {submitting ? "Saving..." : "Create card"}
-      </button>
+      {/* Modal for success or error */}
+            {(success || error) && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                <div className="rounded-xl bg-white p-6 shadow-xl w-full max-w-xs text-center">
+                  <h3 className="text-lg font-bold mb-2">
+                    {success ? "Card created!" : "Failed to create card"}
+                  </h3>
+                  {error && <div className="mb-4 text-red-600">{error}</div>}
+                  <div className="flex flex-col gap-2 mt-4">
+                    {error && (
+                      <button
+                        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                        onClick={() => handleSubmit(new Event('submit') as any)}
+                        type="button"
+                      >
+                        Retry
+                      </button>
+                    )}
+                    <button
+                      className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                      onClick={() => {
+                        setSuccess(false); setError(null); setFront(""); setBack("");
+                      }}
+                      type="button"
+                    >
+                      Create another one
+                    </button>
+                    <button
+                      className="rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
+                      onClick={() => {
+                        if (typeof window !== "undefined") window.location.href = "/dashboard";
+                      }}
+                      type="button"
+                    >
+                      Finish
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <button
+              type="submit"
+              className={cn(
+                "rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700",
+                (!isValid || submitting) && "bg-green-300 cursor-not-allowed"
+              )}
+              disabled={!isValid || submitting}
+            >
+              {submitting ? "Saving..." : "Create card"}
+            </button>
     </form>
   );
 }

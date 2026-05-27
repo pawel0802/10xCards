@@ -60,22 +60,24 @@ export default function GenerateFlashcards() {
         }}
         disabled={generating}
       />
-      <button
-        className={`mb-6 rounded px-4 py-2 text-white transition ${
-          generating || inputText.trim().length < 50 ? "cursor-not-allowed bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
-        } `}
-        onClick={handleGenerate}
-        disabled={generating || inputText.trim().length < 50}
-      >
-        {generating ? "Generating..." : "Generate flashcards"}
-      </button>
-      <button
-        className="ml-2 mb-6 rounded px-4 py-2 bg-green-600 hover:bg-green-700 text-white transition"
-        onClick={() => navigate("/manual-create")}
-        type="button"
-      >
-        Create manually
-      </button>
+      <div className="flex gap-2 mb-6">
+              <button
+                className={`rounded px-4 py-2 text-white transition ${
+                  generating || inputText.trim().length < 50 ? "cursor-not-allowed bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
+                }`}
+                onClick={handleGenerate}
+                disabled={generating || inputText.trim().length < 50}
+              >
+                {generating ? "Generating..." : "Generate flashcards"}
+              </button>
+              <button
+                className="rounded px-4 py-2 bg-green-600 hover:bg-green-700 text-white transition"
+                onClick={() => navigate("/manual-create")}
+                type="button"
+              >
+                Create manually
+              </button>
+            </div>
       {error && <div className="mb-4 text-red-500">{error}</div>}
       <ul className="space-y-4">
         {candidates.map((card) => (
