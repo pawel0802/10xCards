@@ -49,7 +49,7 @@ export default function GenerateFlashcards() {
 
   return (
     <div className="px-4 py-8">
-      <h2 className="mb-4 text-xl font-bold">AI Flashcard Generator</h2>
+      <h2 className="mb-4 text-xl font-bold">Flashcard Generator</h2>
       <textarea
         className="mb-2 block w-full rounded border px-2 py-1"
         rows={4}
@@ -68,7 +68,7 @@ export default function GenerateFlashcards() {
                 onClick={handleGenerate}
                 disabled={generating || inputText.trim().length < 50}
               >
-                {generating ? "Generating..." : "Generate flashcards"}
+                {generating ? "Generating..." : "Generate with AI"}
               </button>
               <button
                 className="rounded px-4 py-2 bg-green-600 hover:bg-green-700 text-white transition"

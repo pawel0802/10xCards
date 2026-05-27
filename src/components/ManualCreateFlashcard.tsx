@@ -44,7 +44,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
-        <label className="block font-semibold mb-1">Front (max 300 chars)</label>
+        <label className="block font-semibold mb-1">Front</label>
         <textarea
           className={cn("block w-full rounded border px-2 py-1", front.length > 300 && "border-red-500")}
           value={front}
@@ -57,7 +57,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                 <div className="text-xs text-gray-500">{front.length}/300</div>
       </div>
       <div>
-        <label className="block font-semibold mb-1">Back (max 300 chars)</label>
+        <label className="block font-semibold mb-1">Back</label>
         <textarea
           className={cn("block w-full rounded border px-2 py-1", back.length > 300 && "border-red-500")}
           value={back}
@@ -71,7 +71,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
       </div>
       {/* Modal for success or error */}
             {(success || error) && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-white backdrop-blur-xl w-full max-w-xs shadow-xl">
                   <h3 className="text-lg font-bold mb-2">
                     {success ? "Card created!" : "Failed to create card"}
@@ -97,7 +97,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                       Create another one
                     </button>
                     <button
-                      className="rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
+                      className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                       onClick={() => {
                         if (typeof window !== "undefined") window.location.href = "/dashboard";
                       }}

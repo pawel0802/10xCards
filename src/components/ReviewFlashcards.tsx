@@ -140,8 +140,11 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
-        <div>Review complete! All cards processed.</div>
-      ) : (
+              <div className="text-center">
+                <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
+                <div className="mb-4">All cards processed.</div>
+              </div>
+            ) : (
         <div className="rounded border p-4">
           <textarea
             className="mb-2 block w-full rounded border px-2 py-1 resize-y min-h-[60px]"
@@ -181,8 +184,8 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
             <button
               type="button"
               className={cn(
-                "rounded bg-gray-200 px-4 py-2 text-gray-800 transition hover:bg-gray-300",
-                candidates[currentIdx].status === "rejected" && "bg-red-600 text-white",
+                "rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-700",
+                candidates[currentIdx].status === "rejected" && "bg-red-800",
               )}
               onClick={() => {
                 handleReject(candidates[currentIdx].id);
