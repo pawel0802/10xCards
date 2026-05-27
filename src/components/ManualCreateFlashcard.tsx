@@ -52,8 +52,9 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
           maxLength={300}
           rows={3}
           required
-        />
-        <div className="text-xs text-gray-500">{front.length}/300</div>
+                  placeholder="Enter front text (min 1, max 300 characters)"
+                />
+                <div className="text-xs text-gray-500">{front.length}/300</div>
       </div>
       <div>
         <label className="block font-semibold mb-1">Back (max 300 chars)</label>
@@ -64,13 +65,14 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
           maxLength={300}
           rows={3}
           required
-        />
-        <div className="text-xs text-gray-500">{back.length}/300</div>
+                  placeholder="Enter back text (min 1, max 300 characters)"
+                />
+                <div className="text-xs text-gray-500">{back.length}/300</div>
       </div>
       {/* Modal for success or error */}
             {(success || error) && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                <div className="rounded-xl bg-white p-6 shadow-xl w-full max-w-xs text-center">
+                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-white backdrop-blur-xl w-full max-w-xs shadow-xl">
                   <h3 className="text-lg font-bold mb-2">
                     {success ? "Card created!" : "Failed to create card"}
                   </h3>
@@ -110,8 +112,10 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
             <button
               type="submit"
               className={cn(
-                "rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700",
-                (!isValid || submitting) && "bg-green-300 cursor-not-allowed"
+                "rounded px-4 py-2 text-white transition",
+                (!isValid || submitting)
+                  ? "bg-green-300 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
               )}
               disabled={!isValid || submitting}
             >

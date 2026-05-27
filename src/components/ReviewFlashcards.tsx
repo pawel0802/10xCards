@@ -199,13 +199,12 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
         <button
           className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
           onClick={() => {
-            // TODO: Replace with real dashboard navigation
             if (typeof window !== "undefined") {
               window.location.href = "/dashboard";
             }
           }}
         >
-          Show your flashcards
+          Finish
         </button>
       )}
     </div>
