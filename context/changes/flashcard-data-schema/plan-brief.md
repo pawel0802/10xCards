@@ -17,13 +17,13 @@ After this change, a single SQL migration applies cleanly via `npx supabase db p
 ## Key Decisions Made
 
 | Decision                 | Choice                                                                      | Why (1 sentence)                                                                                     | Source         |
-| ------------------------ | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------- |
+| ------------------------ |-----------------------------------------------------------------------------| ---------------------------------------------------------------------------------------------------- | -------------- |
 | Card face column names   | `front` / `back`                                                            | Generic flashcard standard (Anki, Quizlet); not Q&A-specific, supports all card types                | Plan           |
 | SR scheduling columns    | Include in F-01 (`due_date`, `interval_days`, `ease_factor`, `repetitions`) | Roadmap flags risk: "SR columns up-front prevents costly ALTER TABLE in S-04"                        | Roadmap / Plan |
 | SR scheduling model      | SM-2 compatible (4 columns)                                                 | Baseline that works with both SM-2 and ts-fsrs; S-04 can add FSRS-specific columns via new migration | Plan           |
 | Review rating type       | `smallint CHECK (1–4)`                                                      | 1=Again/2=Hard/3=Good/4=Easy maps cleanly to both SM-2 grades and FSRS ratings                       | Plan           |
 | TypeScript types         | Hand-written in `src/types.ts`                                              | AGENTS.md hard rule: no `supabase gen types`                                                         | AGENTS.md      |
-| Source tracking          | `source text NOT NULL DEFAULT 'manual' CHECK ('ai', 'manual')`              | PRD secondary success criterion: ≥ 75% of cards from AI — must be measurable                         | PRD / Plan     |
+| Source tracking          | `source text NOT NULL CHECK ('auto', 'manual', 'hybrid')`                   | PRD secondary success criterion: ≥ 75% of cards from AI — must be measurable                         | PRD / Plan     |
 | `review_logs` mutability | INSERT + SELECT only (no UPDATE/DELETE policies)                            | Immutable audit trail; aligns with double-entry ledger pattern for review history                    | Plan           |
 | Deletes                  | Hard delete on `flashcards`                                                 | MVP simplicity; no PRD requirement for undo/history                                                  | Plan           |
 | Migration atomicity      | Single file for both tables                                                 | AGENTS.md hard rule: RLS must be in the same file as `CREATE TABLE`                                  | AGENTS.md      |

@@ -25,7 +25,7 @@ CREATE TABLE public.flashcards (
   user_id      uuid        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   front        text        NOT NULL CHECK (char_length(front) > 0),
   back         text        NOT NULL CHECK (char_length(back) > 0),
-  source       text        NOT NULL DEFAULT 'manual' CHECK (source IN ('ai', 'manual')),
+  source       text        NOT NULL CHECK (source IN ('auto', 'manual', 'hybrid')),
   due_date     timestamptz NOT NULL DEFAULT now(),
   interval_days integer    NOT NULL DEFAULT 0 CHECK (interval_days >= 0),
   ease_factor  numeric(4,3) NOT NULL DEFAULT 2.5 CHECK (ease_factor >= 1.0),

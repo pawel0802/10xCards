@@ -36,7 +36,7 @@ After this plan completes:
 - `auth.users` is the Supabase managed auth table; `user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE` is the standard pattern.
 - `gen_random_uuid()` is the standard Supabase/PostgreSQL UUID generator (no extension needed in pg14+).
 - SR scheduling columns chosen: `due_date`, `interval_days`, `ease_factor`, `repetitions` — SM-2 compatible, sufficient for both SM-2 and ts-fsrs (the likely S-04 library). A S-04 migration can extend this if FSRS-specific columns are needed.
-- `source` column (`'ai' | 'manual'`) is included on `flashcards` to track PRD secondary success criterion (≥ 75% of cards from AI generation).
+- `source` column (`'auto' | 'manual' | 'hybrid'`) is included on `flashcards` to track PRD secondary success criterion (≥ 75% of cards from AI generation).
 
 ## What We're NOT Doing
 
@@ -81,7 +81,7 @@ Create the `supabase/migrations/` directory and write the migration that defines
    - `user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
    - `front text NOT NULL CHECK (char_length(front) > 0)`
    - `back text NOT NULL CHECK (char_length(back) > 0)`
-   - `source text NOT NULL DEFAULT 'manual' CHECK (source IN ('ai', 'manual'))`
+   - `source text NOT NULL CHECK (source IN ('auto', 'manual', 'hybrid'))`
    - `due_date timestamptz NOT NULL DEFAULT now()`
    - `interval_days integer NOT NULL DEFAULT 0 CHECK (interval_days >= 0)`
    - `ease_factor numeric(4,3) NOT NULL DEFAULT 2.5 CHECK (ease_factor >= 1.0)`
@@ -157,7 +157,7 @@ Do not import Supabase-generated types. Keep types plain TypeScript interfaces/t
 
 #### Manual Verification
 
-- Spot-check: each exported type has the correct field names and types matching the migration schema (e.g., `rating: 1 | 2 | 3 | 4`, `source: 'ai' | 'manual'`, SR fields present on `Flashcard`).
+- Spot-check: each exported type has the correct field names and types matching the migration schema (e.g., `rating: 1 | 2 | 3 | 4`, `source: 'auto' | 'manual' | 'hybrid'`, SR fields present on `Flashcard`).
 
 ---
 
