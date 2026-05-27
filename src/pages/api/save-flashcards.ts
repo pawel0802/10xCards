@@ -3,8 +3,9 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase";
 
 const FlashcardSchema = z.object({
-  front: z.string().min(1),
-  back: z.string().min(1),
+  front: z.string().min(1).max(300),
+  back: z.string().min(1).max(300),
+  source: z.enum(["ai", "manual"]).optional(),
 });
 
 const SaveFlashcardsSchema = z.object({
@@ -32,10 +33,11 @@ export const POST: APIRoute = async (context) => {
   const { cards } = parsed.data;
   // Store cards in Supabase (table: flashcards)
   const { error } = await supabase.from("flashcards").insert(
-    cards.map((card: { front: string; back: string }) => ({
+    cards.map((card: { front: string; back: string; source?: string }) => ({
       user_id: user.id,
       front: card.front,
       back: card.back,
+      source: card.source === "manual" ? "manual" : "ai",
     })),
   );
   if (error) {

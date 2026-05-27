@@ -69,6 +69,13 @@ export default function GenerateFlashcards() {
       >
         {generating ? "Generating..." : "Generate flashcards"}
       </button>
+      <button
+        className="ml-2 mb-6 rounded px-4 py-2 bg-green-600 hover:bg-green-700 text-white transition"
+        onClick={() => navigate("/manual-create")}
+        type="button"
+      >
+        Create manually
+      </button>
       {error && <div className="mb-4 text-red-500">{error}</div>}
       <ul className="space-y-4">
         {candidates.map((card) => (
