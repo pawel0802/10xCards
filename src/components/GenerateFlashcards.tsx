@@ -28,14 +28,18 @@ export default function GenerateFlashcards() {
       }
       const data = await res.json();
       const generated = (data.flashcards as { front: string; back: string }[]).map((c, i) => ({
-        id: String(Date.now()) + "-" + i,
+        id: crypto.randomUUID(),
         front: c.front,
         back: c.back,
       }));
       try {
         localStorage.setItem("reviewCandidates", JSON.stringify(generated));
-      } catch (storageErr) {
-        setError("Could not save flashcards to your browser. Please check your storage settings.");
+      } catch (storageErr: any) {
+        if (storageErr && storageErr.name === "QuotaExceededError") {
+          setError("Storage limit reached. Please clear some space in your browser and try again.");
+        } else {
+          setError("Could not save flashcards to your browser. Please check your storage settings.");
+        }
         setGenerating(false);
         return;
       }

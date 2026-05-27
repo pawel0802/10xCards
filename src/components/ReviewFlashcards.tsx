@@ -140,9 +140,22 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
-              <div className="text-center">
-                <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
-                <div className="mb-4">All cards processed.</div>
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-white backdrop-blur-xl w-full max-w-xs shadow-xl">
+                  <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
+                  <div className="mb-4">All cards processed.</div>
+                  <button
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 mt-4"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        window.location.href = "/dashboard";
+                      }
+                    }}
+                    type="button"
+                  >
+                    Finish
+                  </button>
+                </div>
               </div>
             ) : (
         <div className="rounded border p-4">
@@ -184,8 +197,8 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
             <button
               type="button"
               className={cn(
-                "rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-700",
-                candidates[currentIdx].status === "rejected" && "bg-red-800",
+                              "rounded bg-[#7f1d1d] px-4 py-2 text-white transition hover:bg-[#581313]",
+                              candidates[currentIdx].status === "rejected" && "bg-[#3b0a0a]",
               )}
               onClick={() => {
                 handleReject(candidates[currentIdx].id);
