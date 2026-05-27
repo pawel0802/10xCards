@@ -58,7 +58,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       const res = await fetch("/api/save-flashcards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: [{ front: card.front, back: card.back, source: "auto"}] }),
+        body: JSON.stringify({ cards: [{ front: card.front, back: card.back, source: card.status === "edited" ? "hybrid" : "auto" }] }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -91,7 +91,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       const res = await fetch("/api/save-flashcards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: toSave.map(({ front, back }) => ({ front, back, source: "auto" })) }),
+        body: JSON.stringify({ cards: toSave.map(({ front, back, status }) => ({ front, back, source: status === "edited" ? "hybrid" : "auto" })) }),
       });
       if (!res.ok) {
         const data = await res.json();

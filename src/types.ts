@@ -10,7 +10,7 @@ export interface Flashcard {
   user_id: string;
   front: string;
   back: string;
-  source: "auto" | "manual";
+  source: "auto" | "manual" | "hybrid";
   due_date: string; // ISO 8601 timestamptz from Supabase JS
   interval_days: number;
   ease_factor: number;

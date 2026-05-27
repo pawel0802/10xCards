@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase";
 const FlashcardSchema = z.object({
   front: z.string().min(1).max(300),
   back: z.string().min(1).max(300),
-  source: z.enum(["auto", "manual"]).optional(),
+  source: z.enum(["auto", "manual", "hybrid"]).optional(),
 });
 
 const SaveFlashcardsSchema = z.object({
@@ -43,7 +43,7 @@ export const POST: APIRoute = async (context) => {
       user_id: user.id,
       front: card.front,
       back: card.back,
-      source: card.source === "manual" ? "manual" : "auto",
+      source: card.source === "manual" ? "manual" : card.source === "hybrid" ? "hybrid" : "auto",
     })),
   );
   if (error) {
