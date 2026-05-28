@@ -1,5 +1,5 @@
 import { describe, it, vi, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { FlashcardList } from './FlashcardList';
 import type { Flashcard } from '@/types';
 
@@ -23,8 +23,8 @@ describe('FlashcardList', () => {
 
   it('renders flashcards', async () => {
     const cards: Flashcard[] = [
-      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto' },
-      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto' }
+      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 },
+            { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
     ];
     global.fetch = vi.fn().mockResolvedValueOnce({
       json: async () => ({ data: cards, count: 2 })
