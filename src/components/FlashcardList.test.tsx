@@ -101,13 +101,12 @@ describe('FlashcardList advanced actions', () => {
   render(<FlashcardList />);
   expect(await screen.findByText('Front 1', { selector: 'td' })).toBeInTheDocument();
 
-  // Select only the checkboxes for 'Front 1' and 'Front 2' rows
+  // Select only data rows for 'Front 1' and 'Front 2' by clicking the row
   const rows = screen.getAllByRole('row');
   rows.forEach(row => {
-    const cell = row.querySelector('td:nth-child(2)');
+    const cell = row.querySelector('td');
     if (cell && (cell.textContent === 'Front 1' || cell.textContent === 'Front 2')) {
-      const checkbox = row.querySelector('input[type="checkbox"]');
-      if (checkbox) fireEvent.click(checkbox);
+      fireEvent.click(row);
     }
   });
 

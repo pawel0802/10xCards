@@ -122,17 +122,14 @@ if (flashcards.length === 0) {
             {flashcards.map((card, idx) => (
               <tr
                 key={card.id}
-                className={
+                onClick={() => setSelected(sel => sel.includes(card.id) ? sel.filter(id => id !== card.id) : [...sel, card.id])}
+                className={cn(
                   idx % 2 === 0
                     ? "bg-white/20 hover:bg-white/30 transition"
-                    : "bg-white/10 hover:bg-white/30 transition"
-                }
+                    : "bg-white/10 hover:bg-white/30 transition",
+                  selected.includes(card.id) && "!bg-blue-500/40 ring-2 ring-blue-700/60"
+                )}
               >
-                <td className="px-4 py-4 text-center text-white">
-                  <input type="checkbox" checked={selected.includes(card.id)} onChange={e => {
-                    setSelected(sel => e.target.checked ? [...sel, card.id] : sel.filter(id => id !== card.id));
-                  }} />
-                </td>
                 <td className="px-6 py-4 text-center text-white">{card.front}</td>
                 <td className="px-6 py-4 text-center text-white">{card.back}</td>
                 <td className="px-4 py-4 text-center">
