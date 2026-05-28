@@ -200,9 +200,9 @@ Pokrycie testami, manualna weryfikacja edge-case’ów.
 
 ### Phase 1: Backend API: CRUD fiszek
 #### Automated
-- [ ] 1.1 Endpointy zwracają poprawne dane (unit testy)
-- [ ] 1.2 Walidacja zod działa
-- [ ] 1.3 Autoryzacja blokuje niezalogowanych
+- [x] 1.1 Endpointy zwracają poprawne dane (unit testy)
+- [x] 1.2 Walidacja zod działa
+- [x] 1.3 Autoryzacja blokuje niezalogowanych
 #### Manual
 - [ ] 1.4 Pobieranie, edycja, usuwanie działa przez API (np. Postman)
 
