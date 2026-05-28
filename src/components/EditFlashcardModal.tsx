@@ -25,7 +25,7 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
       const res = await fetch(`/api/flashcards`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: flashcard.id, front, back }),
+        body: JSON.stringify({ id: flashcard.id, update: { front, back } }),
       });
       const data = await res.json();
       if (res.ok) {
