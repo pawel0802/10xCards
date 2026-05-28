@@ -1,0 +1,19 @@
+---
+import FlashcardList from "@/components/FlashcardList";
+const { user } = Astro.locals;
+if (!user) {
+  return Astro.redirect("/auth/signin");
+}
+---
+
+<html lang="en">
+  <head>
+    <title>Flashcards Panel</title>
+  </head>
+  <body class="min-h-screen bg-gray-50">
+    <main class="max-w-3xl mx-auto py-8">
+      <h1 class="text-2xl font-bold mb-6">Your Flashcards</h1>
+      <FlashcardList />
+    </main>
+  </body>
+</html>
