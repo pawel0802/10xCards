@@ -208,9 +208,9 @@ Pokrycie testami, manualna weryfikacja edge-case’ów.
 
 ### Phase 2: Widok listy fiszek
 #### Automated
-- [ ] 2.1 Komponent renderuje poprawnie (unit testy)
+- [x] 2.1 Komponent renderuje poprawnie (unit testy)
 #### Manual
-- [ ] 2.2 Lista działa, paginacja i sortowanie poprawne
+- [x] 2.2 Lista działa, paginacja i sortowanie poprawne
 
 ### Phase 3: Edycja i usuwanie fiszek
 #### Automated
