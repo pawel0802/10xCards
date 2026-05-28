@@ -133,9 +133,13 @@ if (flashcards.length === 0) {
                 <td className="px-6 py-4 text-center text-white">{card.front}</td>
                 <td className="px-6 py-4 text-center text-white">{card.back}</td>
                 <td className="px-4 py-4 text-center">
-                  <Button size="sm" onClick={() => setEditModal({open: true, card})}>Edit</Button>
-                  <Button size="sm" className="ml-2 bg-red-600 hover:bg-red-700" onClick={() => handleDelete(card.id)}>Delete</Button>
-                </td>
+                                  {selected.includes(card.id) && (
+                                    <>
+                                      <Button size="sm" onClick={e => { e.stopPropagation(); setEditModal({open: true, card}); }}>Edit</Button>
+                                      <Button size="sm" className="ml-2 bg-red-600 hover:bg-red-700" onClick={e => { e.stopPropagation(); handleDelete(card.id); }}>Delete</Button>
+                                    </>
+                                  )}
+                                </td>
               </tr>
             ))}
           </tbody>
@@ -152,7 +156,9 @@ if (flashcards.length === 0) {
   </Button>
         </div>
         <div className="flex gap-2 mt-6">
-          <Button className="bg-red-700 hover:bg-red-800" disabled={selected.length === 0} onClick={handleMassDelete}>Delete Selected</Button>
+          {selected.length >= 2 && (
+            <Button className="bg-red-700 hover:bg-red-800" onClick={handleMassDelete}>Delete Selected</Button>
+                    )}
           <Button asChild className="bg-[#7f1d1d] hover:bg-[#581313] text-white rounded px-4 py-2">
             <a href="/dashboard">Back</a>
           </Button>

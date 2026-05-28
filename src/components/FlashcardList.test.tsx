@@ -23,10 +23,10 @@ describe('FlashcardList', () => {
     expect(screen.getByText(/back/i)).toBeInTheDocument();
   });
 
-  it('renders flashcards', async () => {
+  it('renders flashcards and shows row actions only when selected', async () => {
     const cards: Flashcard[] = [
       { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 },
-            { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
+      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
     ];
     global.fetch = vi.fn().mockResolvedValueOnce({
       json: async () => ({ data: cards, count: 2 })
@@ -34,6 +34,23 @@ describe('FlashcardList', () => {
     render(<FlashcardList />);
     expect(await screen.findByText('Front 1')).toBeInTheDocument();
     expect(screen.getByText('Back 2')).toBeInTheDocument();
+    // Edit/Delete not visible initially
+    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+    // Select first row
+    const rows = screen.getAllByRole('row');
+    const row1 = rows.find(row => row.textContent?.includes('Front 1'));
+    if (row1) fireEvent.click(row1);
+    // Now Edit/Delete should appear for that row
+    expect(await screen.findByRole('button', { name: 'Edit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+    // 'Delete Selected' not visible for one selection
+    expect(screen.queryByRole('button', { name: 'Delete Selected' })).not.toBeInTheDocument();
+    // Select second row
+    const row2 = rows.find(row => row.textContent?.includes('Front 2'));
+    if (row2) fireEvent.click(row2);
+    // Now 'Delete Selected' should appear
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Delete Selected' })).toBeInTheDocument());
   });
 });
 
@@ -47,9 +64,15 @@ describe('FlashcardList advanced actions', () => {
     render(<FlashcardList />);
       // Wait for the table cell, not the label
       expect((await screen.findAllByText('Front', { selector: 'td' })).length).toBeGreaterThan(0);
-    const editButtons = screen.getAllByRole('button', { name: 'Edit' });
-        fireEvent.click(editButtons[0]);
-        expect(screen.getByText('Edit Flashcard')).toBeInTheDocument();
+    // Select the correct data row (skip header)
+    const rows = screen.getAllByRole('row');
+    // The first row is usually the header, so select the second row
+    const dataRow = rows[1];
+    fireEvent.click(dataRow);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument());
+    const editButton = screen.getByRole('button', { name: 'Edit' });
+    fireEvent.click(editButton);
+    expect(screen.getByText('Edit Flashcard')).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Front', { selector: 'input' }), { target: { value: 'Edited Front' } });
     fireEvent.click(screen.getByText('Save'));
     await waitFor(() => expect(screen.queryByText('Edit Flashcard')).not.toBeInTheDocument());
@@ -68,13 +91,17 @@ describe('FlashcardList advanced actions', () => {
       // Wait for the table cell, not the label
       expect(await screen.findByText('Front 1', { selector: 'td' })).toBeInTheDocument();
       window.confirm = vi.fn(() => true);
-        const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
-        fireEvent.click(deleteButtons[0]);
-        await waitFor(() => expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument());
-        // Should only see Front 2 cell (Front 1 deleted)
-            await waitFor(() => expect(screen.getByText('Front 2', { selector: 'td' })).toBeInTheDocument());
-        expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument();
-        await waitFor(() => expect(screen.getByText('Flashcard deleted!')).toBeInTheDocument());
+      // Select the row first so Delete button appears
+      const row = screen.getAllByRole('row').find(r => r.textContent?.includes('Front 1'));
+      if (row) fireEvent.click(row);
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument());
+      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      fireEvent.click(deleteButton);
+      await waitFor(() => expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument());
+      // Should only see Front 2 cell (Front 1 deleted)
+      await waitFor(() => expect(screen.getByText('Front 2', { selector: 'td' })).toBeInTheDocument());
+      expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument();
+      await waitFor(() => expect(screen.getByText('Flashcard deleted!')).toBeInTheDocument());
   });
 
   it('shows toast on error', async () => {
@@ -82,12 +109,18 @@ describe('FlashcardList advanced actions', () => {
       .mockResolvedValueOnce({ json: async () => ({ data: [card], count: 1 }) }) // initial fetch
       .mockResolvedValueOnce({ json: async () => ({ error: 'fail' }) }); // DELETE
     render(<FlashcardList />);
-      // Wait for the table cell, not the label
-      expect((await screen.findAllByText('Front', { selector: 'td' })).length).toBeGreaterThan(0);
-      window.confirm = vi.fn(() => true);
-    const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
-        fireEvent.click(deleteButtons[0]);
-        await waitFor(() => expect(screen.getByText('fail')).toBeInTheDocument());
+    // Wait for the table cell, not the label
+    expect((await screen.findAllByText('Front', { selector: 'td' })).length).toBeGreaterThan(0);
+    window.confirm = vi.fn(() => true);
+    // Select the correct data row (skip header)
+    const rows = screen.getAllByRole('row');
+    // The first row is usually the header, so select the second row
+    const dataRow = rows[1];
+    fireEvent.click(dataRow);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument());
+    const deleteButton = screen.getByRole('button', { name: 'Delete' });
+    fireEvent.click(deleteButton);
+    await waitFor(() => expect(screen.getByText('fail')).toBeInTheDocument());
   });
 
   it('deletes multiple flashcards', async () => {
