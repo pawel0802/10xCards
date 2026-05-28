@@ -214,7 +214,7 @@ Pokrycie testami, manualna weryfikacja edge-case’ów.
 
 ### Phase 3: Edycja i usuwanie fiszek
 #### Automated
-- [ ] 3.1 Edycja/usuwanie działa (unit testy)
+- [x] 3.1 Edycja/usuwanie działa (unit testy)
 #### Manual
 - [ ] 3.2 Modal działa, toasty się pojawiają, lista odświeża się automatycznie
 
