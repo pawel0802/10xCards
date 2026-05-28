@@ -32,10 +32,10 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Navigation warning
+  // Navigation warning (only during active review)
   React.useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
-      if (hasChanges) {
+      if (hasChanges && currentIdx < candidates.length) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -44,7 +44,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
     return () => {
       window.removeEventListener("beforeunload", handler);
     };
-  }, [hasChanges]);
+  }, [hasChanges, currentIdx, candidates.length]);
 
   // Accept and save immediately
   const handleAccept = async (id: string) => {
