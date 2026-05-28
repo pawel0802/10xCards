@@ -46,12 +46,12 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Edit Flashcard</h2>
         <div className="mb-4">
-          <label htmlFor="edit-front" className="block font-semibold mb-1">Front</label>
-                    <input id="edit-front" className="w-full border rounded px-2 py-1" value={front} onChange={e => setFront(e.target.value)} />
+          <label htmlFor="edit-front" className="block font-semibold mb-1 text-gray-900">Front</label>
+                    <input id="edit-front" className="w-full border rounded px-2 py-1 text-black bg-white" value={front} onChange={e => setFront(e.target.value)} />
         </div>
         <div className="mb-4">
-          <label htmlFor="edit-back" className="block font-semibold mb-1">Back</label>
-                    <input id="edit-back" className="w-full border rounded px-2 py-1" value={back} onChange={e => setBack(e.target.value)} />
+          <label htmlFor="edit-back" className="block font-semibold mb-1 text-gray-900">Back</label>
+                    <input id="edit-back" className="w-full border rounded px-2 py-1 text-black bg-white" value={back} onChange={e => setBack(e.target.value)} />
         </div>
         {error && <div className="text-red-600 mb-2">{error}</div>}
         <div className="flex gap-2 justify-end">
