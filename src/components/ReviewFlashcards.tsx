@@ -140,8 +140,8 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
-              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md">
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-white backdrop-blur-xl w-full max-w-xs shadow-xl">
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="rounded-2xl border border-gray-200/80 bg-white p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
                   <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
                   <div className="mb-4">All cards processed.</div>
                   <button

@@ -43,15 +43,6 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      <button
-        type="button"
-        className="rounded bg-[#7f1d1d] px-4 py-2 text-white hover:bg-[#581313] mb-4"
-        onClick={() => {
-          if (typeof window !== "undefined") window.location.href = "/generate";
-        }}
-      >
-        Back
-      </button>
       <div>
         <label className="block font-semibold mb-1">Front</label>
         <textarea
@@ -80,8 +71,8 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
       </div>
       {/* Modal for success or error */}
             {(success || error) && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md">
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-white backdrop-blur-xl w-full max-w-xs shadow-xl">
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="rounded-2xl border border-gray-200/80 bg-white p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
                   <h3 className="text-lg font-bold mb-2">
                     {success ? "Card created!" : "Failed to create card"}
                   </h3>
