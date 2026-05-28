@@ -173,12 +173,17 @@ describe('FlashcardList advanced actions', () => {
     }
   });
 
-  window.confirm = vi.fn(() => true);
+  // Interact with the custom modal for mass delete
   fireEvent.click(screen.getAllByRole('button', { name: 'Delete Selected' })[0]);
+  // Wait for modal to appear
+  expect(await screen.findByText(/delete 2 flashcards/i)).toBeInTheDocument();
+  // Click the Delete button in the modal (last Delete button)
+  const deleteButtons = screen.getAllByRole('button', { name: /^delete$/i });
+  fireEvent.click(deleteButtons[deleteButtons.length - 1]);
 
   await waitFor(() => {
-    expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument();
-    expect(screen.queryByText('Front 2', { selector: 'td' })).not.toBeInTheDocument();
+   expect(screen.queryByText('Front 1', { selector: 'td' })).not.toBeInTheDocument();
+   expect(screen.queryByText('Front 2', { selector: 'td' })).not.toBeInTheDocument();
   });
   await waitFor(() => expect(screen.getByText('Flashcards deleted!')).toBeInTheDocument());
 });

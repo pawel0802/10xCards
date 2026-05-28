@@ -34,8 +34,11 @@ export const GET: APIRoute = async (context) => {
   }
   const { page, pageSize } = parsed.data;
   const { data, count, error } = await getFlashcards(user.id, page, pageSize, context.request.headers, context.cookies as AstroCookies);
-  if (error) return new Response(JSON.stringify({ error }), { status: 500 });
-  return new Response(JSON.stringify({ data, count }), { status: 200 });
+  if (error) {
+  console.error("API error:", error);
+  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+    }
+    return new Response(JSON.stringify({ data, count }), { status: 200 });
 };
 
 export const PATCH: APIRoute = async (context) => {
@@ -48,8 +51,11 @@ export const PATCH: APIRoute = async (context) => {
   }
   const { id, update } = parsed.data;
   const { data, error } = await updateFlashcard(user.id, id, update as FlashcardUpdateDto, context.request.headers, context.cookies as AstroCookies);
-  if (error) return new Response(JSON.stringify({ error }), { status: 500 });
-  return new Response(JSON.stringify({ data }), { status: 200 });
+  if (error) {
+  console.error("API error:", error);
+  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+    }
+    return new Response(JSON.stringify({ data }), { status: 200 });
 };
 
 export const DELETE: APIRoute = async (context) => {
@@ -62,6 +68,9 @@ export const DELETE: APIRoute = async (context) => {
   }
   const { ids } = parsed.data;
   const { count, error } = await deleteFlashcards(user.id, ids, context.request.headers, context.cookies as AstroCookies);
-  if (error) return new Response(JSON.stringify({ error }), { status: 500 });
-  return new Response(JSON.stringify({ count }), { status: 200 });
+  if (error) {
+  console.error("API error:", error);
+  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+    }
+    return new Response(JSON.stringify({ count }), { status: 200 });
 };

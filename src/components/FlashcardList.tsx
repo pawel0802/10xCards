@@ -24,6 +24,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [editModal, setEditModal] = useState<{open: boolean, card: Flashcard|null}>({open: false, card: null});
   const [toast, setToast] = useState<{message: string, type?: "success"|"error"} | null>(null);
+  const [showMassDeleteModal, setShowMassDeleteModal] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -46,7 +47,6 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
 
   // --- Handlers ---
 function handleDelete(id: string) {
-  if (!window.confirm("Delete this flashcard? This cannot be undone.")) return;
   fetch(`/api/flashcards`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
@@ -63,7 +63,10 @@ function handleDelete(id: string) {
 }
 function handleMassDelete() {
   if (selected.length === 0) return;
-  if (!window.confirm(`Delete ${selected.length} flashcards? This cannot be undone.`)) return;
+  setShowMassDeleteModal(true);
+}
+
+function confirmMassDelete() {
   fetch(`/api/flashcards`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
@@ -78,6 +81,7 @@ function handleMassDelete() {
         setSelected([]);
       }
     });
+  setShowMassDeleteModal(false);
 }
 
 if (flashcards.length === 0) {
@@ -161,11 +165,24 @@ if (flashcards.length === 0) {
         <div className="flex gap-2 mt-6">
           {selected.length >= 2 && (
             <Button className="bg-red-700 hover:bg-red-800" onClick={handleMassDelete}>Delete Selected</Button>
-                    )}
+          )}
           <Button asChild className="bg-[#7f1d1d] hover:bg-[#581313] text-white rounded px-4 py-2">
             <a href="/dashboard">Back</a>
           </Button>
         </div>
+
+        {showMassDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full text-center">
+              <div className="text-xl font-bold text-red-700 mb-4">Delete {selected.length} flashcards?</div>
+              <div className="mb-6 text-gray-700">This action cannot be undone. Are you sure you want to delete the selected flashcards?</div>
+              <div className="flex justify-center gap-4">
+                <Button className="bg-red-700 hover:bg-red-800 text-white" onClick={confirmMassDelete}>Delete</Button>
+                <Button variant="outline" onClick={() => setShowMassDeleteModal(false)}>Cancel</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
 };
