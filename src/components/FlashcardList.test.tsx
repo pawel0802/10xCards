@@ -54,6 +54,36 @@ describe('FlashcardList', () => {
   });
 });
 
+it('shows/hides pagination buttons correctly', async () => {
+  const cards: Flashcard[] = [];
+  for (let i = 1; i <= 25; i++) {
+    cards.push({ id: String(i), front: `Front ${i}`, back: `Back ${i}`, user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 });
+  }
+  global.fetch = vi.fn().mockResolvedValue({ json: async () => ({ data: cards.slice(0, 10), count: 25 }) });
+  render(<FlashcardList />);
+  // Wait for first page
+  expect(await screen.findByText('Front 1')).toBeInTheDocument();
+  // On first page: Previous hidden, Next visible
+  expect(screen.queryByRole('button', { name: 'Previous' })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
+
+  // Go to page 2
+  global.fetch = vi.fn().mockResolvedValue({ json: async () => ({ data: cards.slice(10, 20), count: 25 }) });
+  fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+  expect(await screen.findByText('Front 11')).toBeInTheDocument();
+  // On middle page: both visible
+  expect(screen.getByRole('button', { name: 'Previous' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
+
+  // Go to last page
+  global.fetch = vi.fn().mockResolvedValue({ json: async () => ({ data: cards.slice(20, 25), count: 25 }) });
+  fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+  expect(await screen.findByText('Front 21')).toBeInTheDocument();
+  // On last page: Previous visible, Next hidden
+  expect(screen.getByRole('button', { name: 'Previous' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
+});
+
 describe('FlashcardList advanced actions', () => {
   const card: Flashcard = { id: '1', front: 'Front', back: 'Back', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 };
 

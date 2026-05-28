@@ -110,9 +110,8 @@ if (flashcards.length === 0) {
           />
         )}
         <table className="min-w-full rounded-xl shadow-lg overflow-hidden">
-          <thead>
-          <tr className="bg-gradient-to-r from-blue-700/80 to-purple-700/80 border-b-4 border-blue-400/60 sticky top-0 z-10">
-            <th className="px-4 py-4"></th>
+            <thead>
+            <tr className="bg-gradient-to-r from-blue-700/80 to-purple-700/80 border-b-4 border-blue-400/60 sticky top-0 z-10">
             <th className="px-6 py-4 text-center font-extrabold text-xl text-white drop-shadow">Front</th>
             <th className="px-6 py-4 text-center font-extrabold text-xl text-white drop-shadow">Back</th>
             <th className="px-4 py-4"></th>
@@ -145,15 +144,19 @@ if (flashcards.length === 0) {
           </tbody>
         </table>
         <div className="flex justify-between items-center mt-4">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
-    Previous
-  </Button>
+          {page > 1 && (
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => Math.max(1, p - 1))}>
+              Previous
+            </Button>
+          )}
           <span>
             Page {page} of {Math.max(1, Math.ceil(count / 10))}
           </span>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => (p * 10 < count ? p + 1 : p))} disabled={page * 10 >= count}>
-    Next
-  </Button>
+          {page * 10 < count && (
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => p + 1)}>
+              Next
+            </Button>
+          )}
         </div>
         <div className="flex gap-2 mt-6">
           {selected.length >= 2 && (
