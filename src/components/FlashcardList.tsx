@@ -44,8 +44,8 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
       <div className={cn("flex flex-col items-center gap-4 p-8", className)}>
         <div className="text-lg">You don't have any flashcards yet</div>
         <div className="flex gap-2">
-          <Button asChild variant="default"><a href="/generate">Generate the first one</a></Button>
-          <Button asChild variant="destructive"><a href="/dashboard">Back</a></Button>
+          <Button asChild className="bg-green-600 hover:bg-green-700 text-white rounded px-4 py-2"><a href="/generate">Generate the first one</a></Button>
+          <Button asChild className="bg-[#7f1d1d] hover:bg-[#581313] text-white rounded px-4 py-2"><a href="/dashboard">Back</a></Button>
         </div>
       </div>
     );
@@ -70,13 +70,13 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
         </tbody>
       </table>
       <div className="flex justify-between items-center mt-4">
-        <Button variant="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
   Previous
 </Button>
         <span>
           Page {page} of {Math.max(1, Math.ceil(count / 10))}
         </span>
-        <Button variant="secondary" onClick={() => setPage((p) => (p * 10 < count ? p + 1 : p))} disabled={page * 10 >= count}>
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2" onClick={() => setPage((p) => (p * 10 < count ? p + 1 : p))} disabled={page * 10 >= count}>
   Next
 </Button>
       </div>

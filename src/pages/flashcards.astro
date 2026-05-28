@@ -6,9 +6,13 @@ if (!user) {
 }
 ---
 
-<div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-  <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-    <h1 class="text-2xl font-bold mb-6">Your Flashcards</h1>
-    <FlashcardList />
+import Layout from "@/layouts/Layout.astro";
+
+<Layout>
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1 class="text-2xl font-bold mb-6">Your Flashcards</h1>
+      <FlashcardList />
+    </div>
   </div>
-</div>
+</Layout>
