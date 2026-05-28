@@ -53,18 +53,25 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
 
   return (
     <div className={cn("w-full", className)}>
-      <table className="min-w-full border">
+      <table className="min-w-full rounded-xl shadow-lg overflow-hidden">
         <thead>
-          <tr>
-            <th className="p-2 border">Front</th>
-            <th className="p-2 border">Back</th>
+          <tr className="bg-white/30">
+            <th className="px-6 py-3 text-center font-bold text-lg text-white">Front</th>
+            <th className="px-6 py-3 text-center font-bold text-lg text-white">Back</th>
           </tr>
         </thead>
         <tbody>
-          {flashcards.map((card) => (
-            <tr key={card.id}>
-              <td className="p-2 border">{card.front}</td>
-              <td className="p-2 border">{card.back}</td>
+          {flashcards.map((card, idx) => (
+            <tr
+              key={card.id}
+              className={
+                idx % 2 === 0
+                  ? "bg-white/20 hover:bg-white/30 transition"
+                  : "bg-white/10 hover:bg-white/30 transition"
+              }
+            >
+              <td className="px-6 py-4 text-center text-white">{card.front}</td>
+              <td className="px-6 py-4 text-center text-white">{card.back}</td>
             </tr>
           ))}
         </tbody>
@@ -80,8 +87,13 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
   Next
 </Button>
       </div>
-    </div>
-  );
+        <div className="flex justify-end mt-6">
+          <Button asChild className="bg-[#7f1d1d] hover:bg-[#581313] text-white rounded px-4 py-2">
+            <a href="/dashboard">Back</a>
+          </Button>
+        </div>
+      </div>
+    );
 };
 
 export default FlashcardList;
