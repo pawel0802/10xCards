@@ -55,10 +55,10 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
     <div className={cn("w-full", className)}>
       <table className="min-w-full rounded-xl shadow-lg overflow-hidden">
         <thead>
-          <tr className="bg-white/30">
-            <th className="px-6 py-3 text-center font-bold text-lg text-white">Front</th>
-            <th className="px-6 py-3 text-center font-bold text-lg text-white">Back</th>
-          </tr>
+        <tr className="bg-gradient-to-r from-blue-700/80 to-purple-700/80 border-b-4 border-blue-400/60 sticky top-0 z-10">
+          <th className="px-6 py-4 text-center font-extrabold text-xl text-white drop-shadow">Front</th>
+          <th className="px-6 py-4 text-center font-extrabold text-xl text-white drop-shadow">Back</th>
+        </tr>
         </thead>
         <tbody>
           {flashcards.map((card, idx) => (
