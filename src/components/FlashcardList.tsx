@@ -44,7 +44,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
       <div className={cn("flex flex-col items-center gap-4 p-8", className)}>
         <div className="text-lg">You don't have any flashcards yet</div>
         <div className="flex gap-2">
-          <Button asChild className="bg-green-600 hover:bg-green-700 text-white rounded px-4 py-2"><a href="/generate">Generate the first one</a></Button>
+          <Button asChild className="bg-green-600 hover:bg-green-700 text-white rounded px-4 py-2"><a href="/generate">Generate flashcards</a></Button>
           <Button asChild className="bg-[#7f1d1d] hover:bg-[#581313] text-white rounded px-4 py-2"><a href="/dashboard">Back</a></Button>
         </div>
       </div>
