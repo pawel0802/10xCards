@@ -72,7 +72,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
       {/* Modal for success or error */}
             {(success || error) && (
               <div className="fixed inset-0 z-50 flex items-center justify-center">
-                <div className="rounded-2xl border border-gray-200/80 bg-white/80 p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
+                <div className="rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
                   <h3 className="text-lg font-bold mb-2">
                     {success ? "Card created!" : "Failed to create card"}
                   </h3>
