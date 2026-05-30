@@ -149,9 +149,9 @@ Add dedicated /learning page and SpacedReview component.
 
 ### Phase 1: DB & Types
 #### Automated
-- [ ] 1.1 Create migration file `supabase/migrations/20260601_create_fsrs_flashcards_and_review_logs.sql`
-- [ ] 1.2 Add RLS policies and implement RPC `public.record_review` with signature & validation; schedule security audit
-- [ ] 1.3 Update `src/types.ts` to FSRS types
+- [x] 1.1 Create migration file `supabase/migrations/20260601_create_fsrs_flashcards_and_review_logs.sql`
+- [x] 1.2 Add RLS policies and implement RPC `public.record_review` with signature & validation; schedule security audit
+- [x] 1.3 Update `src/types.ts` to FSRS types
 #### Manual
 - [ ] 1.4 Verify RPC atomicity with staging test user
 

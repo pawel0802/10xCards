@@ -12,9 +12,12 @@ export interface Flashcard {
   back: string;
   source: "auto" | "manual" | "hybrid";
   due_date: string; // ISO 8601 timestamptz from Supabase JS
-  interval_days: number;
-  ease_factor: number;
-  repetitions: number;
+  state: number;
+  stability: number;
+  difficulty: number;
+  reps: number;
+  lapses: number;
+  last_review?: string | null; // ISO 8601
   created_at: string; // ISO 8601
   updated_at: string; // ISO 8601
 }
@@ -24,7 +27,11 @@ export interface ReviewLog {
   user_id: string;
   flashcard_id: string;
   rating: 1 | 2 | 3 | 4; // 1=Again 2=Hard 3=Good 4=Easy
+  prior_state?: Record<string, unknown>;
+  elapsed_days?: number | null;
+  scheduled_days?: number | null;
   reviewed_at: string; // ISO 8601
+  idempotency_key?: string | null;
 }
 
 // ============================================================
