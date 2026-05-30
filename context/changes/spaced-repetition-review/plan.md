@@ -157,10 +157,10 @@ Add dedicated /learning page and SpacedReview component.
 
 ### Phase 2: Server
 #### Automated
-- [ ] 2.0 Run ts-fsrs compatibility test in Worker runtime
-- [ ] 2.1 Implement `src/lib/scheduler.ts` wrapper and unit tests
-- [ ] 2.2 Implement `src/lib/services/review.ts` and unit tests
-- [ ] 2.3 Add API endpoints `GET /api/learning/due` and `POST /api/learning/review`
+- [x] 2.0 Run ts-fsrs compatibility test in Worker runtime
+- [x] 2.1 Implement `src/lib/scheduler.ts` wrapper and unit tests
+- [x] 2.2 Implement `src/lib/services/review.ts` and unit tests
+- [x] 2.3 Add API endpoints `GET /api/learning/due` and `POST /api/learning/review`
 #### Manual
 - [ ] 2.4 End-to-end API smoke test
 
