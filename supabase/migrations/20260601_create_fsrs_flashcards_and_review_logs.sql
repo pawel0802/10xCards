@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS public.flashcards (
 ALTER TABLE public.flashcards ENABLE ROW LEVEL SECURITY;
 
 -- Owner-only policies (authenticated users may only act on their rows)
-CREATE POLICY IF NOT EXISTS flashcards_owner_select ON public.flashcards FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS flashcards_owner_insert ON public.flashcards FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS flashcards_owner_update ON public.flashcards FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS flashcards_owner_delete ON public.flashcards FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY flashcards_owner_select ON public.flashcards FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY flashcards_owner_insert ON public.flashcards FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY flashcards_owner_update ON public.flashcards FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY flashcards_owner_delete ON public.flashcards FOR DELETE USING (auth.uid() = user_id);
 
 -- ======================================================
 -- review_logs table (audit + optimizer-ready fields)
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS public.review_logs (
 
 ALTER TABLE public.review_logs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS review_logs_owner_select ON public.review_logs FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS review_logs_owner_insert ON public.review_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY IF NOT EXISTS review_logs_owner_update ON public.review_logs FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY review_logs_owner_select ON public.review_logs FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY review_logs_owner_insert ON public.review_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY review_logs_owner_update ON public.review_logs FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 CREATE UNIQUE INDEX IF NOT EXISTS review_logs_idempotency_idx ON public.review_logs (idempotency_key) WHERE idempotency_key IS NOT NULL;
 
