@@ -166,8 +166,8 @@ Add dedicated /learning page and SpacedReview component.
 
 ### Phase 3: Frontend
 #### Automated
-- [ ] 3.1 Add `src/components/SpacedReview.tsx` unit tests
-- [ ] 3.2 Add page `src/pages/learning.astro`
+- [x] 3.1 Add `src/components/SpacedReview.tsx` unit tests
+- [x] 3.2 Add page `src/pages/learning.astro`
 #### Manual
 - [ ] 3.3 Manual session smoke test (10 cards)
 
