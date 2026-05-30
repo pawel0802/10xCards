@@ -1,65 +1,64 @@
-# Spaced Repetition Review — Plan Brief
+# Spaced Repetition Review (S-04) — Plan Brief
 
 > Full plan: `context/changes/spaced-repetition-review/plan.md`
 > Research: `context/changes/spaced-repetition-review/research.md`
 
 ## What & Why
 
-Add server-side spaced-repetition reviews (S-04) using the ts-fsrs scheduler to provide consistent, multi-device-synced review scheduling and durable audit logs. This enables reliable review timing and analytics while keeping algorithm state server-side.
+Add a dedicated spaced-repetition "learning" flow backed by an FSRS-compatible schema and an atomic review RPC. This separates AI candidate generation (/api/review) from learner-facing scheduling (/api/learning), ensuring correct scheduler state, reproducible logs for optimizer training, and a clean UX for study sessions.
 
 ## Starting Point
 
-- Repo has Supabase client/middleware and a ReviewFlashcards React island.
-- Existing flashcard model lacks SR columns; save flow doesn't persist scheduler state (see research.md).
+- Supabase auth and flashcard CRUD exist; current DB uses SM-2 fields.
+- No server-side ts-fsrs integration or transactional review API.
+- Frontend has AI candidate review UI but no learning session UI.
 
 ## Desired End State
 
-- Flashcards table includes SR columns and `generator_params` JSONB.
-- Server endpoints: GET /api/review/due (10 cards) and POST /api/flashcards/:id/review (sync scheduler.next inside transaction).
-- UI fetches due cards and posts ratings (0..3); minimal tests and CI bundling check for Workers.
+- New FSRS-ready DB tables and an RPC to record reviews atomically.
+- Cloudflare Worker–compatible scheduler wrapper (with Node fallback if needed).
+- API: GET /api/learning/due (default 10 cards) and POST /api/learning/review for rating submissions.
+- Frontend: /learning page with a SpacedReview component that enforces a 4-point rating and blocks advance on submit errors.
 
-## Key Decisions Made
+## Key Decisions
 
-| Decision | Choice | Why (1 sentence) | Source |
+| Decision | Choice | Why | Source |
 |---|---:|---|---|
-| Scheduler location | Server-side, synchronous in POST handler | Consistent canonical schedule and multi-device sync | Research + Plan |
-| generator_params storage | JSONB `generator_params` | Flexible, stores full ts-fsrs state for reproducibility | Research |
-| Rating mapping | Integer 0..3 (0=Again..3=Easy) | Matches ts-fsrs enum and stores compactly | Plan (you) |
-| Existing data | Delete all existing flashcards (after backup) | Simplifies migration and state reset per your decision | Plan (you) |
-| Interval unit | Integer days (rounded) | Simple and human-friendly | Plan (you) |
-| Fetch batch size | 10 cards | Short, manageable review sessions | Plan (you) |
-| Review logs retention | 1 year then archive | Audit trail without indefinite storage growth | Plan (you) |
+| Where FSRS params live | Global server config | Simpler, smaller DB footprint | User decision
+| Atomic updates | DB RPC `public.record_review` | Atomic, minimal race window | Research + discussion
+| Runtime for scheduler | Cloudflare Workers (with fallback) | Single deployment model; test compatibility | User decision
+| Session batch size | 10 cards | Balanced payload vs frequency | User input
 
 ## Scope
 
-**In scope:** DB migrations (flashcards + review_logs + RLS), ts-fsrs install & server integration, GET/POST review APIs, UI wiring for review island, CI bundling verification, backups and deletion of existing cards.
-
-**Out of scope:** Client-only/offline scheduling, S-01 AI provider selection, full-scale perf benchmarking.
+**In scope:** DB schema (FSRS), RPC, scheduler wrapper, GET/POST learning APIs, learning UI page and component, tests, RLS.
+**Out of scope:** Migrating existing cards; per-card generator_parameters; offline sync.
 
 ## Architecture / Approach
 
-Server-side request-response model: clients request due cards, server computes and returns them; when users rate a card, POST handler runs scheduler.next() synchronously inside a DB transaction to update flashcard SR fields and insert a review log. `generator_params` is persisted as JSONB so the scheduler state is restorable.
+- DB: FSRS-ready tables with RLS + RPC for atomic update.
+- Server: scheduler wrapper callable from Cloudflare Worker runtime; fallback to Node serverless if needed.
+- Frontend: dedicated /learning page mounting SpacedReview (client:load).
 
 ## Phases at a Glance
 
 | Phase | What it delivers | Key risk |
 |---|---|---|
-| 1. Migrations & types | DB schema, types, backup + deletion | Data loss risk if backup missing |
-| 2. Backend | Review endpoints + scheduler integration | Request latency & Workers bundling risk |
-| 3. UI | Review island integration (10 cards) | UX bugs in rating mapping |
-| 4. CI & Rollout | Bundling checks, tests, staging rollout | Migration mistakes on production |
+| 1. DB & Types | FSRS tables + RPC + types | RLS & RPC security review
+| 2. Server | Scheduler wrapper + endpoints | ts-fsrs compatibility in Worker
+| 3. Frontend | /learning page + SpacedReview | UX error handling
+| 4. Tests & Deploy | Integration + RLS tests | Concurrency edges
 
-**Prerequisites:** Access to DB for backups, Supabase migration tooling, CI permission to add a bundling job. 
-**Estimated effort:** ~1–2 developer-weeks (1 engineer) for MVP implementation and staging rollout.
+**Prerequisites:** Supabase admin migration access; service role key for staging if RPC SECURITY DEFINER not used.
+**Estimated effort:** ~3–6 dev-days across phases (MVP scope).
 
 ## Open Risks & Assumptions
 
-- ts-fsrs may require shims for Cloudflare Workers; plan includes CI bundling verification and fallbacks.
-- Deleting all existing flashcards is irreversible — backup and stakeholder sign-off required.
-- Synchronous per-rating computation increases server CPU; monitor and consider async offload if needed.
+- ts-fsrs may require Node APIs not available in Workers; fallback is assumed.
+- Security: RPCs require careful policy & validation.
 
 ## Success Criteria (Summary)
 
-- GET /api/review/due returns due cards (10) for authenticated users.
-- POST /api/flashcards/:id/review updates SR fields in a single transaction and inserts a review_log.
-- Review UI successfully fetches and posts ratings; staging migration completed and production rollout executed after sign-off.
+- Learner can fetch 10 due cards and submit ratings; DB updates reflect scheduler output and review_logs contain optimizer fields.
+- Automated tests cover scheduler, RPC atomicity, and RLS policies.
+- Learning UI handles failures by blocking advance and allowing retry.
