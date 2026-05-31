@@ -153,7 +153,7 @@ Add dedicated /learning page and SpacedReview component.
 - [x] 1.2 Add RLS policies and implement RPC `public.record_review` with signature & validation; schedule security audit
 - [x] 1.3 Update `src/types.ts` to FSRS types
 #### Manual
-- [ ] 1.4 Verify RPC atomicity with staging test user
+- [x] 1.4 Verify RPC atomicity with staging test user
 
 ### Phase 2: Server
 #### Automated
@@ -162,14 +162,14 @@ Add dedicated /learning page and SpacedReview component.
 - [x] 2.2 Implement `src/lib/services/review.ts` and unit tests
 - [x] 2.3 Add API endpoints `GET /api/learning/due` and `POST /api/learning/review`
 #### Manual
-- [ ] 2.4 End-to-end API smoke test
+- [x] 2.4 End-to-end API smoke test
 
 ### Phase 3: Frontend
 #### Automated
 - [x] 3.1 Add `src/components/SpacedReview.tsx` unit tests
 - [x] 3.2 Add page `src/pages/learning.astro`
 #### Manual
-- [ ] 3.3 Manual session smoke test (10 cards)
+- [x] 3.3 Manual session smoke test (10 cards)
 
 ### Phase 4: Tests & Deploy
 #### Automated
