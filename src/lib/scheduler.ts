@@ -30,18 +30,53 @@ function mapClientRating(r: number) {
 }
 
 export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
-  const cardInput = {
-    due: cardRow.due_date ? new Date(cardRow.due_date) : new Date(),
-    stability: Number(cardRow.stability ?? 0),
-    difficulty: Number(cardRow.difficulty ?? 0.3),
-    reps: Number(cardRow.reps ?? 0),
-    lapses: Number(cardRow.lapses ?? 0),
-    state: Number(cardRow.state ?? 0),
-    last_review: cardRow.last_review ? new Date(cardRow.last_review) : undefined,
-  } as any;
-
+  // Defensive mapping from DB row -> ts-fsrs card input
   const now = new Date();
-  const result = scheduler.next(cardInput, now, mapClientRating(ratingNumber));
+  const S_MIN = 1e-3;
+
+  const rawStability = cardRow.stability === undefined || cardRow.stability === null ? 0 : Number(cardRow.stability);
+  const rawDifficulty = cardRow.difficulty === undefined || cardRow.difficulty === null ? 0 : Number(cardRow.difficulty);
+  const rawReps = Number(cardRow.reps ?? 0);
+  const rawLapses = Number(cardRow.lapses ?? 0);
+  const rawState = Number(cardRow.state ?? 0);
+
+  // Normalize difficulty: ts-fsrs expects difficulty in [1,10]. Some existing data may use 0..1 scale.
+  let difficulty = rawDifficulty;
+  if (rawDifficulty > 0 && rawDifficulty < 1) {
+    // map 0..1 -> 1..10
+    difficulty = 1 + rawDifficulty * 9;
+  }
+  // If both are zero, keep zeros to let the scheduler treat card as NEW
+  if (rawDifficulty === 0 && rawStability === 0) {
+    difficulty = 0;
+  }
+  // Ensure difficulty meets algorithm minimum when non-zero
+  if (difficulty > 0 && difficulty < 1) difficulty = 1;
+
+  // Normalize stability: ensure non-zero stability is at least S_MIN
+  let stability = rawStability;
+  if (stability > 0 && stability < S_MIN) stability = S_MIN;
+
+  const cardInput: any = {
+    due: cardRow.due_date ? new Date(cardRow.due_date) : now,
+    stability: stability,
+    difficulty: difficulty,
+    reps: rawReps,
+    lapses: rawLapses,
+    state: rawState,
+    last_review: cardRow.last_review ? new Date(cardRow.last_review) : undefined,
+  };
+
+  let result: any;
+  try {
+    result = scheduler.next(cardInput, now, mapClientRating(ratingNumber));
+  } catch (e: any) {
+    // If scheduler validation fails (e.g. invalid memory state), fall back to treating
+    // the card as NEW so the algorithm can initialize sensible defaults.
+    console.error('scheduler.next validation error, falling back to NEW card:', e?.message ?? e, { cardInput });
+    const fallbackInput = { ...cardInput, difficulty: 0, stability: 0, state: 0 };
+    result = scheduler.next(fallbackInput, now, mapClientRating(ratingNumber));
+  }
 
   const updatedFlashcardFields = {
     state: result.card.state,
