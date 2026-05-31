@@ -28,21 +28,27 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/learning/due?limit=${batchSize}`);
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        throw new Error(data.error || `Failed to load (${res.status})`);
+        console.debug('SpacedReview: loadCards start');
+        const url = `/api/learning/due?limit=${batchSize}`;
+        console.debug('SpacedReview: fetching', url);
+        const res = await fetch(url);
+        console.debug('SpacedReview: fetch status', res.status);
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          throw new Error(data.error || `Failed to load (${res.status})`);
+        }
+        const data = await res.json();
+        const loaded = Array.isArray(data) ? data : data.cards ?? [];
+        console.debug('SpacedReview: loaded count', loaded.length);
+        setCards(loaded);
+        setCurrentIdx(0);
+      } catch (e: any) {
+        console.error('SpacedReview: load error', e);
+        setError(e.message || "Failed to load cards.");
+      } finally {
+        setLoading(false);
       }
-      const data = await res.json();
-      const loaded = Array.isArray(data) ? data : data.cards ?? [];
-      setCards(loaded);
-      setCurrentIdx(0);
-    } catch (e: any) {
-      setError(e.message || "Failed to load cards.");
-    } finally {
-      setLoading(false);
     }
-  }
 
   async function submitRating(rating: number) {
     if (!cards[currentIdx]) return;
