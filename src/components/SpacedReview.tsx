@@ -139,15 +139,15 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
   return (
     <div className="px-4 py-8">
       <div className="mb-4 flex items-center gap-4">
-        <div className="text-sm text-gray-700">Card {currentIdx + 1} of {total}</div>
+        <div className="text-sm text-white font-medium">Card {currentIdx + 1} of {total}</div>
         <div className="flex-1 h-2 bg-gray-200 rounded">
           <div className="h-2 bg-blue-500 rounded" style={{ width: `${((currentIdx + 1) / total) * 100}%` }} />
         </div>
       </div>
 
-      <div className="rounded border p-4 mb-4">
-        <div className="mb-2 text-lg font-medium">{card.front}</div>
-        {showBack && <div className="mb-2 text-sm text-gray-700">{card.back}</div>}
+      <div className="rounded border p-4 mb-4 bg-white/5">
+        <div className="mb-2 text-lg font-semibold text-white">{card.front}</div>
+        {showBack && <div className="mb-2 text-base text-white/90">{card.back}</div>}
         {!showBack && (
           <button className="mt-2 rounded bg-white/10 px-3 py-1 text-sm text-white" onClick={() => setShowBack(true)}>
             Show answer
