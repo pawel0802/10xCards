@@ -173,9 +173,9 @@ Add dedicated /learning page and SpacedReview component.
 
 ### Phase 4: Tests & Deploy
 #### Automated
-- [ ] 4.1 Integration tests (DB + RLS)
-- [ ] 4.2 CI updated to run SR tests
-- [ ] 4.3 Add scheduler health-check endpoint and basic logging
+- [x] 4.1 Integration tests (DB + RLS)
+- [x] 4.2 CI updated to run SR tests
+- [x] 4.3 Add scheduler health-check endpoint and basic logging
 #### Manual
 - [ ] 4.4 Staging verification and monitoring checks
 
