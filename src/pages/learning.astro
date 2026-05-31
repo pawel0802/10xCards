@@ -1,14 +1,23 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SpacedReview from "@/components/SpacedReview.tsx";
+import { getDueFlashcards } from "@/lib/services/review";
 
 const { user } = Astro.locals;
+
+let initialCards = [];
+if (user) {
+  const { data: dueData } = await getDueFlashcards(user.id, 10, Astro.request.headers, Astro.cookies);
+  if (Array.isArray(dueData) && dueData.length) {
+    initialCards = dueData.map((c) => ({ id: c.id, front: c.front, back: c.back }));
+  }
+}
 ---
 
 <Layout title="Learning">
   <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
     <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <SpacedReview client:load />
+      <SpacedReview initialCards={initialCards} client:load />
     </div>
   </div>
 </Layout>
