@@ -177,7 +177,7 @@ Add dedicated /learning page and SpacedReview component.
 - [x] 4.2 CI updated to run SR tests
 - [x] 4.3 Add scheduler health-check endpoint and basic logging
 #### Manual
-- [ ] 4.4 Staging verification and monitoring checks
+- [x] 4.4 Staging verification and monitoring checks
 
 
 ---

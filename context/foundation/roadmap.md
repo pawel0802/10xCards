@@ -34,6 +34,8 @@ top_blocker: time
 | S-02 | manual-card-creation     | ręcznie stworzyć fiszkę z pytaniem i odpowiedzią                                                                      | F-01          | FR-004                                                           | proposed |
 | S-03 | card-management          | przeglądać pełną listę swoich fiszek, edytować treść dowolnej fiszki lub ją usunąć                                    | F-01          | FR-005                                                           | proposed |
 | S-04 | spaced-repetition-review | rozpocząć i ukończyć sesję powtórek spaced repetition, z kartami zaplanowanymi przez algorytm SR na podstawie wyników | S-01          | FR-006                                                           | proposed |
+| S-05 | dashboard-landing        | po zalogowaniu wejść na dashboard: centrum nawigacyjne z linkami do generatora kart, zarządzania kartami, sesji SR i wylogowania | —             | —                                                                | proposed |
+| S-06 | ui-ux-improvements      | poprawki UI/UX: Finish button dostępny na każdej stronie (oprócz dashboardu); na /learning zamiast "No flashcards to review." tekst "All caught up!"; nowoczesne kolory przycisków i ikony dla kluczowych CTA | —             | —                                                                | proposed |
 
 ## Streams
 
@@ -124,6 +126,32 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Gwiazda przewodnia — wszystkie poprzednie slajzy prowadzą tutaj; błędna biblioteka SR może wymagać refaktoru harmonogramowania kart, ale nie blokuje podstawowego przepływu MVP.
 - **Status:** proposed
 
+### S-05: Dashboard landing page
+
+- **Outcome:** po zalogowaniu użytkownik trafia na dashboard — centralne miejsce z szybkim dostępem do generatora kart (S-01), zarządzania kartami (S-03), sesji nauki (S-04) oraz przyciskiem wylogowania.
+- **Change ID:** dashboard-landing
+- **PRD refs:** —
+- **Prerequisites:** (auth) — baseline (auth pages present)
+- **Parallel with:** S-01, S-02, S-03, S-04
+- **Blockers:** —
+- **Unknowns:**
+  - Dokładny układ i CTA (kafelki vs. listy)? — Owner: user. Block: no.
+- **Risk:** Niskie ryzyko — podstawowa nawigacja; wpływ głównie na odkrywalność funkcji.
+- **Status:** proposed
+
+### S-06: UI/UX improvements
+
+- **Outcome:** Finish button dostępny na każdej stronie poza dashboardem; na /learning zamiast "No flashcards to review." wiadomość "All caught up!"; przyciski otrzymują nowoczesną paletę kolorów i kluczowe CTA dostają ikonę.
+- **Change ID:** ui-ux-improvements
+- **PRD refs:** —
+- **Prerequisites:** —
+- **Parallel with:** S-01, S-02, S-03, S-04, S-05
+- **Blockers:** —
+- **Unknowns:**
+  - Dokładna paleta kolorów i zestaw ikon? — Owner: user. Block: no.
+- **Risk:** Niskie ryzyko — kosmetyczne zmiany zwiększające odkrywalność i spójność UI.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                | Suggested issue title                        | Ready for `/10x-plan` | Notes                                 |
@@ -133,6 +161,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-02       | manual-card-creation     | Manual flashcard creation form               | no                    | Needs F-01 done first                 |
 | S-03       | card-management          | Flashcard list, edit, and delete             | no                    | Needs F-01 done first                 |
 | S-04       | spaced-repetition-review | Spaced repetition review session             | no                    | Needs S-01 done first                 |
+| S-05       | dashboard-landing       | Dashboard landing page with navigation and sign-out | no                    | Depends on auth (baseline); link targets may be placeholders until targets implemented |
+| S-06       | ui-ux-improvements      | UI/UX polish: Finish button everywhere (except dashboard), 'All caught up!' message, modern button colors and icons | no                    | Cosmetic; may require design tokens or theme variables |
 
 ## Open Roadmap Questions
 
