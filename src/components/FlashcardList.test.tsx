@@ -20,7 +20,7 @@ describe('FlashcardList', () => {
     render(<FlashcardList />);
     expect(await screen.findByText(/you don't have any flashcards yet/i)).toBeInTheDocument();
     expect(screen.getByText(/generate flashcards/i)).toBeInTheDocument();
-    expect(screen.getByText(/back/i)).toBeInTheDocument();
+    expect(screen.queryByText(/back/i)).not.toBeInTheDocument();
   });
 
   it('renders flashcards and shows row actions only when selected', async () => {
