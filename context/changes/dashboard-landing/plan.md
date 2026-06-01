@@ -191,8 +191,8 @@ Suggested SVG icons (Lucide-style, 24×24, `stroke="currentColor"` `stroke-width
 
 #### Automated
 
-- [ ] 2.1 Linting passes
-- [ ] 2.2 Build succeeds
+- [x] 2.1 Linting passes
+- [x] 2.2 Build succeeds
 
 #### Manual
 
