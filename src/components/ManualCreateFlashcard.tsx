@@ -83,7 +83,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
             <div className="mt-4 flex flex-col gap-2">
               {error && (
                 <button
-                  className="inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                   onClick={async () => {
                     await handleSubmit({ preventDefault: () => {} } as any);
                   }}
@@ -94,7 +94,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                 </button>
               )}
               <button
-                className="inline-flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                 onClick={() => {
                   setSuccess(false);
                   setError(null);
@@ -107,7 +107,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                 Create another one
               </button>
               <button
-                className="inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                 onClick={() => {
                   if (typeof window !== "undefined") window.location.href = "/dashboard";
                 }}
@@ -125,7 +125,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
           type="submit"
           className={cn(
             "inline-flex items-center gap-2 rounded px-4 py-2 text-white transition",
-            !isValid || submitting ? "cursor-not-allowed bg-green-300" : "bg-green-600 hover:bg-green-700",
+            !isValid || submitting ? "cursor-not-allowed bg-purple-300" : "bg-purple-600 hover:bg-purple-700",
           )}
           disabled={!isValid || submitting}
         >
@@ -134,7 +134,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
         </button>
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded bg-[#7f1d1d] px-4 py-2 text-white hover:bg-[#581313]"
+          className="inline-flex items-center gap-2 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
           onClick={() => {
             if (typeof window !== "undefined") window.location.href = "/generate";
           }}

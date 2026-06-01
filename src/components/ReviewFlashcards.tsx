@@ -143,7 +143,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           </div>
           <div className="h-2 flex-1 rounded bg-gray-200">
             <div
-              className="h-2 rounded bg-blue-500"
+              className="h-2 rounded bg-purple-500"
               style={{ width: `${((currentIdx + 1) / candidates.length) * 100}%` }}
             />
           </div>
@@ -157,7 +157,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
             <h2 className="mb-2 text-xl font-bold">Review Complete!</h2>
             <div className="mb-4">All cards processed.</div>
             <button
-              className="mt-4 inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="mt-4 inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.location.href = "/dashboard";
@@ -196,7 +196,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
             <button
               type="button"
               className={cn(
-                "inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
+                "inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700",
                 candidates[currentIdx].status === "accepted" && "bg-green-600",
               )}
               onClick={async () => {
@@ -228,7 +228,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       )}
       {currentIdx >= candidates.length && (
         <button
-          className="mt-6 inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+          className="mt-6 inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
           onClick={() => {
             if (typeof window !== "undefined") {
               window.location.href = "/dashboard";
