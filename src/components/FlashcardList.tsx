@@ -106,7 +106,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
           <div className="flex gap-2">
             <Button
               asChild
-              className="inline-flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+              className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
             >
               <a href="/generate">
                 <Sparkles className="size-4" />
@@ -200,7 +200,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
       <div className="mt-4 flex items-center justify-between">
         {page > 1 && (
           <Button
-            className="inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
             onClick={() => {
               setPage((p) => Math.max(1, p - 1));
             }}
@@ -214,7 +214,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
         </span>
         {page * 10 < count && (
           <Button
-            className="inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
             onClick={() => {
               setPage((p) => p + 1);
             }}

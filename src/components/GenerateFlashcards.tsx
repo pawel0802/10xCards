@@ -79,7 +79,7 @@ export default function GenerateFlashcards() {
           {generating ? "Generating..." : "Generate with AI"}
         </button>
         <button
-          className="inline-flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+          className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
           onClick={() => navigate("/manual-create")}
           type="button"
         >
