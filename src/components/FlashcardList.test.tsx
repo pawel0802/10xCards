@@ -25,8 +25,8 @@ describe('FlashcardList', () => {
 
   it('renders flashcards and shows row actions only when selected', async () => {
     const cards: Flashcard[] = [
-      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 },
-      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
+      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 },
+      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 }
     ];
     global.fetch = vi.fn().mockResolvedValueOnce({
       json: async () => ({ data: cards, count: 2 })
@@ -57,7 +57,7 @@ describe('FlashcardList', () => {
 it('shows/hides pagination buttons correctly', async () => {
   const cards: Flashcard[] = [];
   for (let i = 1; i <= 25; i++) {
-    cards.push({ id: String(i), front: `Front ${i}`, back: `Back ${i}`, user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 });
+    cards.push({ id: String(i), front: `Front ${i}`, back: `Back ${i}`, user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 });
   }
   global.fetch = vi.fn().mockResolvedValue({ json: async () => ({ data: cards.slice(0, 10), count: 25 }) });
   render(<FlashcardList />);
@@ -85,7 +85,7 @@ it('shows/hides pagination buttons correctly', async () => {
 });
 
 describe('FlashcardList advanced actions', () => {
-  const card: Flashcard = { id: '1', front: 'Front', back: 'Back', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 };
+  const card: Flashcard = { id: '1', front: 'Front', back: 'Back', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 };
 
   it('opens edit modal and saves changes', async () => {
     global.fetch = vi.fn()
@@ -111,8 +111,8 @@ describe('FlashcardList advanced actions', () => {
 
   it('deletes a flashcard', async () => {
     const cards: Flashcard[] = [
-      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 },
-      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
+      { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 },
+      { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 }
     ];
     global.fetch = vi.fn()
           .mockResolvedValueOnce({ json: async () => ({ data: cards, count: 2 }) }) // initial fetch
@@ -155,8 +155,8 @@ describe('FlashcardList advanced actions', () => {
 
   it('deletes multiple flashcards', async () => {
   const cards: Flashcard[] = [
-    { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 },
-    { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', interval_days: 1, ease_factor: 2.5, repetitions: 0 }
+    { id: '1', front: 'Front 1', back: 'Back 1', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 },
+    { id: '2', front: 'Front 2', back: 'Back 2', user_id: 'u', created_at: '', updated_at: '', source: 'auto', due_date: '', state: 0, stability: 0, difficulty: 0, reps: 0, lapses: 0 }
   ];
   global.fetch = vi.fn()
     .mockResolvedValueOnce({ json: async () => ({ data: cards, count: 2 }) }) // initial fetch
