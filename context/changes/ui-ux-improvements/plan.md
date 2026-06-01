@@ -192,6 +192,92 @@ Add `<Topbar />` to the five app pages, then add Lucide icons to every interacti
 
 ---
 
+## Phase 3: Modal & Popup Redesign
+
+### Overview
+
+Unify all modal and popup surfaces under a single **cosmic-glass** design language that is consistent with the dark cosmic background of the app. Every modal gets a blurred dark backdrop, a dark-glass panel with a subtle border, a large icon badge at the top, and inputs/buttons that are readable on a dark surface.
+
+### Design Specification
+
+**Backdrop** (all modals):
+```
+fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm
+```
+
+**Panel — info/completion/confirmation** (max-w-sm, centred text):
+```
+w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900/95 p-6 text-center shadow-2xl
+```
+
+**Panel — edit form** (max-w-md, left-aligned text):
+```
+w-full max-w-md rounded-2xl border border-white/10 bg-gray-900/95 p-6 shadow-2xl
+```
+
+**Icon badge at top** (replaces bare headings):
+- Success: `mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-purple-500/20` with `CheckCircle2 size-8 text-purple-400`
+- Error: same structure with `bg-red-500/20` / `AlertCircle text-red-400`
+- Warning/Destructive: `bg-red-500/20` / `Trash2 text-red-400`
+- Edit: `bg-purple-500/20` / `Pencil text-purple-400`
+
+**Heading**: `text-xl font-bold text-white mb-1`
+**Body/sub-text**: `text-sm text-white/60 mb-6`
+**Error inline text**: `text-sm text-red-400 mb-4`
+
+**Form inputs** (EditFlashcardModal):
+```
+w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/40
+focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500
+```
+
+**Form labels**: `text-sm font-medium text-white/70 mb-1`
+
+**Buttons**: unchanged colour rules — primary `bg-purple-600`, destructive `bg-red-600`, neutral/cancel `bg-gray-700 hover:bg-gray-600`
+
+### Surfaces to Update
+
+| File | Modal(s) |
+|---|---|
+| `src/components/ManualCreateFlashcard.tsx` | Success / error modal after card creation |
+| `src/components/ReviewFlashcards.tsx` | "Review Complete!" completion modal |
+| `src/components/SpacedReview.tsx` | "Review Complete!" completion modal (also fix leftover `bg-blue-600` button) |
+| `src/components/EditFlashcardModal.tsx` | Edit-flashcard form modal |
+| `src/components/FlashcardList.tsx` | Mass-delete confirmation modal |
+
+New Lucide imports needed:
+- `ManualCreateFlashcard.tsx`: `CheckCircle2`, `AlertCircle` (already has `RotateCcw`, `Plus`, `Home`)
+- `ReviewFlashcards.tsx`: `CheckCircle2` (already has `Home`)
+- `SpacedReview.tsx`: `CheckCircle2` (already has `Home`, `RotateCcw`, `Eye`)
+- `EditFlashcardModal.tsx`: `Pencil`, `X`
+- `FlashcardList.tsx`: `Trash2` already imported; add `AlertTriangle`
+
+### Changes Required
+
+- **3.1** `ManualCreateFlashcard.tsx` — restyle modal: add `backdrop-blur-sm bg-black/70` backdrop; dark-glass panel; `CheckCircle2`/`AlertCircle` icon badge; dark text colours
+- **3.2** `ReviewFlashcards.tsx` — restyle completion modal: same dark-glass treatment; `CheckCircle2` badge; purple-600 Finish button (fix the residual `bg-blue-600` inside the hidden duplicate button at line ~229)
+- **3.3** `SpacedReview.tsx` — restyle completion modal: same dark-glass treatment; `CheckCircle2` badge; fix `bg-blue-600` → `bg-purple-600` Finish button; fix progress bar `bg-blue-500` → `bg-purple-500`
+- **3.4** `EditFlashcardModal.tsx` — restyle: dark-glass panel; `Pencil` icon badge; dark inputs with focus ring; dark labels; `X` close icon in top-right; cancel button `bg-gray-700`
+- **3.5** `FlashcardList.tsx` — restyle mass-delete modal: dark-glass panel; `AlertTriangle` icon badge; keep red destructive button
+
+### Success Criteria
+
+#### Automated Verification
+
+- `npm run build` completes without errors
+- `npx vitest run` — all tests pass (modal markup changes must not break existing tests)
+
+#### Manual Verification
+
+- All modals appear with dark blurred backdrop — content behind is dimmed and blurred
+- Modal panels are dark-glass style, readable on cosmic background
+- Icon badges appear at the top of every modal
+- Edit-flashcard inputs are dark-style with purple focus ring
+- No light-coloured (`bg-white`, `bg-gray-200`) modal panels remain in the app
+- Completion modals (ManualCreate, ReviewFlashcards, SpacedReview) look polished and cohesive
+
+---
+
 ## Testing Strategy
 
 ### Manual Testing Steps
@@ -236,7 +322,26 @@ Add `<Topbar />` to the five app pages, then add Lucide icons to every interacti
 
 #### Manual
 
-- [ ] 2.3 All five app pages show Topbar with purple Dashboard pill
-- [ ] 2.4 Topbar Dashboard pill navigates to `/dashboard`
-- [ ] 2.5 All interactive buttons show corresponding Lucide icon
-- [ ] 2.6 Icons vertically aligned with button text, no layout breaks
+- [x] 2.3 All five app pages show Topbar with purple Dashboard pill
+- [x] 2.4 Topbar Dashboard pill navigates to `/dashboard`
+- [x] 2.5 All interactive buttons show corresponding Lucide icon
+- [x] 2.6 Icons vertically aligned with button text, no layout breaks
+
+### Phase 3: Modal & Popup Redesign
+
+#### Automated
+
+- [ ] 3.1 `ManualCreateFlashcard.tsx` — dark-glass modal with icon badge
+- [ ] 3.2 `ReviewFlashcards.tsx` — dark-glass completion modal with icon badge
+- [ ] 3.3 `SpacedReview.tsx` — dark-glass completion modal + fix leftover blue buttons
+- [ ] 3.4 `EditFlashcardModal.tsx` — dark-glass panel, dark inputs, X close button
+- [ ] 3.5 `FlashcardList.tsx` — dark-glass mass-delete modal with icon badge
+- [ ] 3.6 `npm run build` passes
+- [ ] 3.7 `npx vitest run` — all tests pass
+
+#### Manual
+
+- [ ] 3.8 All modals have dark blurred backdrop
+- [ ] 3.9 All modal panels are dark-glass style with icon badges
+- [ ] 3.10 Edit-flashcard inputs have dark style and purple focus ring
+- [ ] 3.11 No light-coloured modal panels remain in the app
