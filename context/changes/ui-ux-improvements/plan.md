@@ -328,16 +328,16 @@ New Lucide imports needed:
 - [x] 2.6 Icons vertically aligned with button text, no layout breaks
 
 ### Phase 3: Modal & Popup Redesign
-
+S-06
 #### Automated
 
-- [ ] 3.1 `ManualCreateFlashcard.tsx` — dark-glass modal with icon badge
-- [ ] 3.2 `ReviewFlashcards.tsx` — dark-glass completion modal with icon badge
-- [ ] 3.3 `SpacedReview.tsx` — dark-glass completion modal + fix leftover blue buttons
-- [ ] 3.4 `EditFlashcardModal.tsx` — dark-glass panel, dark inputs, X close button
-- [ ] 3.5 `FlashcardList.tsx` — dark-glass mass-delete modal with icon badge
-- [ ] 3.6 `npm run build` passes
-- [ ] 3.7 `npx vitest run` — all tests pass
+- [x] 3.1 `ManualCreateFlashcard.tsx` — dark-glass modal with icon badge
+- [x] 3.2 `ReviewFlashcards.tsx` — dark-glass completion modal with icon badge
+- [x] 3.3 `SpacedReview.tsx` — dark-glass completion modal + fix leftover blue buttons
+- [x] 3.4 `EditFlashcardModal.tsx` — dark-glass panel, dark inputs, X close button
+- [x] 3.5 `FlashcardList.tsx` — dark-glass mass-delete modal with icon badge
+- [x] 3.6 `npm run build` passes
+- [x] 3.7 `npx vitest run` — all tests pass
 
 #### Manual
 

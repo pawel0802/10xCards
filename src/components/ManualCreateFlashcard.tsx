@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Save, ArrowLeft, RotateCcw, Plus, Home } from "lucide-react";
+import { Save, ArrowLeft, RotateCcw, Plus, Home, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface Props {
   onSuccess?: () => void;
@@ -76,14 +76,20 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
       </div>
       {/* Modal for success or error */}
       {(success || error) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="w-full max-w-xs rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl">
-            <h3 className="mb-2 text-lg font-bold">{success ? "Card created!" : "Failed to create card"}</h3>
-            {error && <div className="mb-4 text-red-600">{error}</div>}
-            <div className="mt-4 flex flex-col gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900/95 p-6 text-center shadow-2xl">
+            <div className={cn("mx-auto mb-4 flex size-14 items-center justify-center rounded-full", success ? "bg-purple-500/20" : "bg-red-500/20")}>
+              {success
+                ? <CheckCircle2 className="size-8 text-purple-400" />
+                : <AlertCircle className="size-8 text-red-400" />}
+            </div>
+            <h3 className="mb-1 text-xl font-bold text-white">{success ? "Card created!" : "Failed to create card"}</h3>
+            {error && <div className="mb-4 text-sm text-red-400">{error}</div>}
+            {success && <p className="mb-6 text-sm text-white/60">Your flashcard has been saved successfully.</p>}
+            <div className="flex flex-col gap-2">
               {error && (
                 <button
-                  className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                   onClick={async () => {
                     await handleSubmit({ preventDefault: () => {} } as any);
                   }}
@@ -94,7 +100,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                 </button>
               )}
               <button
-                className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                 onClick={() => {
                   setSuccess(false);
                   setError(null);
@@ -107,7 +113,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
                 Create another one
               </button>
               <button
-                className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
                 onClick={() => {
                   if (typeof window !== "undefined") window.location.href = "/dashboard";
                 }}

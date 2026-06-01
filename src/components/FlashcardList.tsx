@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Pencil, Trash2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, ChevronRight, Sparkles, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Flashcard } from "@/types";
 import EditFlashcardModal from "@/components/EditFlashcardModal";
@@ -234,24 +234,30 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
       </div>
 
       {showMassDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-sm rounded-lg bg-white p-8 text-center shadow-lg">
-            <div className="mb-4 text-xl font-bold text-red-700">Delete {selected.length} flashcards?</div>
-            <div className="mb-6 text-gray-700">
-              This action cannot be undone. Are you sure you want to delete the selected flashcards?
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900/95 p-6 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-red-500/20">
+              <AlertTriangle className="size-8 text-red-400" />
             </div>
-            <div className="flex justify-center gap-4">
-              <Button className="bg-red-700 text-white hover:bg-red-800" onClick={confirmMassDelete}>
-                Delete
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowMassDeleteModal(false);
-                }}
+            <h3 className="mb-1 text-xl font-bold text-white">Delete {selected.length} flashcards?</h3>
+            <p className="mb-6 text-sm text-white/60">
+              This action cannot be undone. Are you sure you want to delete the selected flashcards?
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                className="inline-flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+                onClick={() => { setShowMassDeleteModal(false); }}
+                type="button"
               >
                 Cancel
-              </Button>
+              </button>
+              <button
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                onClick={confirmMassDelete}
+                type="button"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

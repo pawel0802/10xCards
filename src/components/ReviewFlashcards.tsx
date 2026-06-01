@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
+import { CheckCircle, XCircle, RotateCcw, Home, CheckCircle2 } from "lucide-react";
 
 interface FlashcardCandidate {
   id: string;
@@ -152,12 +152,15 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="w-full max-w-xs rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl">
-            <h2 className="mb-2 text-xl font-bold">Review Complete!</h2>
-            <div className="mb-4">All cards processed.</div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900/95 p-6 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-purple-500/20">
+              <CheckCircle2 className="size-8 text-purple-400" />
+            </div>
+            <h2 className="mb-1 text-xl font-bold text-white">Review Complete!</h2>
+            <p className="mb-6 text-sm text-white/60">All cards processed.</p>
             <button
-              className="mt-4 inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.location.href = "/dashboard";
@@ -225,19 +228,6 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
             </button>
           </div>
         </div>
-      )}
-      {currentIdx >= candidates.length && (
-        <button
-          className="mt-6 inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              window.location.href = "/dashboard";
-            }
-          }}
-        >
-          <Home className="size-4" />
-          Finish
-        </button>
       )}
     </div>
   );
