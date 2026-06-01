@@ -179,13 +179,13 @@ Suggested SVG icons (Lucide-style, 24×24, `stroke="currentColor"` `stroke-width
 
 #### Automated
 
-- [ ] 1.1 Linting passes
-- [ ] 1.2 Build succeeds
+- [x] 1.1 Linting passes
+- [x] 1.2 Build succeeds
 
 #### Manual
 
-- [ ] 1.3 Unauthenticated requests to /generate, /flashcards, /learning, /manual-create redirect to /auth/signin
-- [ ] 1.4 All four pages load normally when signed in
+- [x] 1.3 Unauthenticated requests to /generate, /flashcards, /learning, /manual-create redirect to /auth/signin
+- [x] 1.4 All four pages load normally when signed in
 
 ### Phase 2: Rebuild Dashboard UI
 
