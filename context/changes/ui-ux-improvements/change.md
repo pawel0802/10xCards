@@ -1,7 +1,7 @@
 ﻿---
 change_id: ui-ux-improvements
 title: UI/UX improvements
-status: planned
+status: implementing
 created: 2026-05-31
 updated: 2026-06-01
 archived_at: null

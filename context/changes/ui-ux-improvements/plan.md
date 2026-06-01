@@ -217,15 +217,15 @@ Add `<Topbar />` to the five app pages, then add Lucide icons to every interacti
 
 #### Automated
 
-- [ ] 1.1 `npm run lint` passes with no new errors
-- [ ] 1.2 `npm run build` completes without type errors
+- [x] 1.1 `npm run lint` passes with no new errors
+- [x] 1.2 `npm run build` completes without type errors
 
 #### Manual
 
-- [ ] 1.3 Primary buttons appear vivid violet on the cosmic background
-- [ ] 1.4 Topbar Dashboard link renders as a purple pill with layout icon
-- [ ] 1.5 Sign out link shows a logout icon
-- [ ] 1.6 `/learning` empty state shows "All caught up! 🎉"
+- [x] 1.3 Primary buttons appear vivid violet on the cosmic background
+- [x] 1.4 Topbar Dashboard link renders as a purple pill with layout icon
+- [x] 1.5 Sign out link shows a logout icon
+- [x] 1.6 `/learning` empty state shows "All caught up! 🎉"
 
 ### Phase 2: Topbar Propagation + Icons
 

@@ -105,7 +105,10 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
       </div>
     );
 
-  if (cards.length === 0) return <div>No flashcards to review.</div>;
+  if (cards.length === 0)
+    return (
+      <div className="text-center text-lg font-semibold text-white/80">All caught up! 🎉</div>
+    );
 
   if (currentIdx >= cards.length)
     return (
