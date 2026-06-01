@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Sparkles, PenLine } from "lucide-react";
 
 export default function GenerateFlashcards() {
   const [inputText, setInputText] = useState("");
@@ -35,7 +36,7 @@ export default function GenerateFlashcards() {
       try {
         localStorage.setItem("reviewCandidates", JSON.stringify(generated));
       } catch (storageErr: any) {
-        if (storageErr && storageErr.name === "QuotaExceededError") {
+        if (storageErr?.name === "QuotaExceededError") {
           setError("Storage limit reached. Please clear some space in your browser and try again.");
         } else {
           setError("Could not save flashcards to your browser. Please check your storage settings.");
@@ -64,24 +65,28 @@ export default function GenerateFlashcards() {
         }}
         disabled={generating}
       />
-      <div className="flex gap-2 mb-6">
-              <button
-                className={`rounded px-4 py-2 text-white transition ${
-                  generating || inputText.trim().length < 50 ? "cursor-not-allowed bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
-                }`}
-                onClick={handleGenerate}
-                disabled={generating || inputText.trim().length < 50}
-              >
-                {generating ? "Generating..." : "Generate with AI"}
-              </button>
-              <button
-                className="rounded px-4 py-2 bg-green-600 hover:bg-green-700 text-white transition"
-                onClick={() => navigate("/manual-create")}
-                type="button"
-              >
-                Create manually
-              </button>
-            </div>
+      <div className="mb-6 flex gap-2">
+        <button
+          className={`inline-flex items-center gap-2 rounded px-4 py-2 text-white transition ${
+            generating || inputText.trim().length < 50
+              ? "cursor-not-allowed bg-blue-300"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+          onClick={handleGenerate}
+          disabled={generating || inputText.trim().length < 50}
+        >
+          <Sparkles className="size-4" />
+          {generating ? "Generating..." : "Generate with AI"}
+        </button>
+        <button
+          className="inline-flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+          onClick={() => navigate("/manual-create")}
+          type="button"
+        >
+          <PenLine className="size-4" />
+          Create manually
+        </button>
+      </div>
       {error && <div className="mb-4 text-red-500">{error}</div>}
       <ul className="space-y-4">
         {candidates.map((card) => (

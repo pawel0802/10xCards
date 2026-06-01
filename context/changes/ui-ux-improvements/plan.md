@@ -231,8 +231,8 @@ Add `<Topbar />` to the five app pages, then add Lucide icons to every interacti
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` completes without type errors
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` completes without type errors
 
 #### Manual
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import { CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
 
 interface FlashcardCandidate {
   id: string;
@@ -58,7 +59,9 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       const res = await fetch("/api/save-flashcards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: [{ front: card.front, back: card.back, source: card.status === "edited" ? "hybrid" : "auto" }] }),
+        body: JSON.stringify({
+          cards: [{ front: card.front, back: card.back, source: card.status === "edited" ? "hybrid" : "auto" }],
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -71,7 +74,6 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       setLoading(false);
     }
   };
-
 
   const handleReject = (id: string) => {
     setCandidates(candidates.map((c) => (c.id === id ? { ...c, status: "rejected" } : c)));
@@ -91,7 +93,13 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       const res = await fetch("/api/save-flashcards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: toSave.map(({ front, back, status }) => ({ front, back, source: status === "edited" ? "hybrid" : "auto" })) }),
+        body: JSON.stringify({
+          cards: toSave.map(({ front, back, status }) => ({
+            front,
+            back,
+            source: status === "edited" ? "hybrid" : "auto",
+          })),
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -114,7 +122,11 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
   if (error)
     return (
       <div className="text-red-500">
-        {error} <button onClick={handleSubmit}>Retry</button>
+        {error}{" "}
+        <button className="inline-flex items-center gap-2" onClick={handleSubmit}>
+          <RotateCcw className="size-4" />
+          Retry
+        </button>
       </div>
     );
 
@@ -129,9 +141,9 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           <div className="text-sm text-gray-700">
             Card {currentIdx + 1} of {candidates.length}
           </div>
-          <div className="flex-1 h-2 bg-gray-200 rounded">
+          <div className="h-2 flex-1 rounded bg-gray-200">
             <div
-              className="h-2 bg-blue-500 rounded"
+              className="h-2 rounded bg-blue-500"
               style={{ width: `${((currentIdx + 1) / candidates.length) * 100}%` }}
             />
           </div>
@@ -140,50 +152,51 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       {candidates.length === 0 ? (
         <div>No flashcards to review.</div>
       ) : currentIdx >= candidates.length ? (
-              <div className="fixed inset-0 z-50 flex items-center justify-center">
-                <div className="rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
-                  <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
-                  <div className="mb-4">All cards processed.</div>
-                  <button
-                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 mt-4"
-                    onClick={() => {
-                      if (typeof window !== "undefined") {
-                        window.location.href = "/dashboard";
-                      }
-                    }}
-                    type="button"
-                  >
-                    Finish
-                  </button>
-                </div>
-              </div>
-            ) : (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="w-full max-w-xs rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl">
+            <h2 className="mb-2 text-xl font-bold">Review Complete!</h2>
+            <div className="mb-4">All cards processed.</div>
+            <button
+              className="mt-4 inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.location.href = "/dashboard";
+                }
+              }}
+              type="button"
+            >
+              <Home className="size-4" />
+              Finish
+            </button>
+          </div>
+        </div>
+      ) : (
         <div className="rounded border p-4">
           <textarea
-            className="mb-2 block w-full rounded border px-2 py-1 resize-y min-h-[60px]"
+            className="mb-2 block min-h-[60px] w-full resize-y rounded border px-2 py-1"
             value={candidates[currentIdx].front}
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, e.target.value, candidates[currentIdx].back);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
             rows={Math.max(2, Math.ceil(candidates[currentIdx].front.length / 60))}
-            style={{ minHeight: '60px' }}
+            style={{ minHeight: "60px" }}
           />
           <textarea
-            className="mb-2 block w-full rounded border px-2 py-1 resize-y min-h-[60px]"
+            className="mb-2 block min-h-[60px] w-full resize-y rounded border px-2 py-1"
             value={candidates[currentIdx].back}
             onChange={(e) => {
               handleEdit(candidates[currentIdx].id, candidates[currentIdx].front, e.target.value);
             }}
             disabled={candidates[currentIdx].status === "rejected"}
             rows={Math.max(2, Math.ceil(candidates[currentIdx].back.length / 60))}
-            style={{ minHeight: '60px' }}
+            style={{ minHeight: "60px" }}
           />
           <div className="flex gap-2">
             <button
               type="button"
               className={cn(
-                "rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
+                "inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700",
                 candidates[currentIdx].status === "accepted" && "bg-green-600",
               )}
               onClick={async () => {
@@ -192,13 +205,14 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
               }}
               disabled={loading || candidates[currentIdx].status === "accepted"}
             >
+              <CheckCircle className="size-4" />
               Accept
             </button>
             <button
               type="button"
               className={cn(
-                              "rounded bg-[#7f1d1d] px-4 py-2 text-white transition hover:bg-[#581313]",
-                              candidates[currentIdx].status === "rejected" && "bg-[#3b0a0a]",
+                "inline-flex items-center gap-2 rounded bg-[#7f1d1d] px-4 py-2 text-white transition hover:bg-[#581313]",
+                candidates[currentIdx].status === "rejected" && "bg-[#3b0a0a]",
               )}
               onClick={() => {
                 handleReject(candidates[currentIdx].id);
@@ -206,6 +220,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
               }}
               disabled={candidates[currentIdx].status === "rejected"}
             >
+              <XCircle className="size-4" />
               Reject
             </button>
           </div>
@@ -213,13 +228,14 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       )}
       {currentIdx >= candidates.length && (
         <button
-          className="mt-6 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+          className="mt-6 inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
           onClick={() => {
             if (typeof window !== "undefined") {
               window.location.href = "/dashboard";
             }
           }}
         >
+          <Home className="size-4" />
           Finish
         </button>
       )}

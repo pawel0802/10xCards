@@ -1,13 +1,17 @@
 ---
 import FlashcardList from "@/components/FlashcardList";
 import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
 ---
 
 <Layout>
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1 class="text-2xl font-bold mb-6">Your Flashcards</h1>
-      <FlashcardList client:load />
+  <div class="bg-cosmic min-h-screen p-4">
+    <Topbar />
+    <div class="flex justify-center pt-8">
+      <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+        <h1 class="mb-6 text-2xl font-bold">Your Flashcards</h1>
+        <FlashcardList client:load />
+      </div>
     </div>
   </div>
 </Layout>

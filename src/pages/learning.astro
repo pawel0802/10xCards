@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SpacedReview from "@/components/SpacedReview.tsx";
+import Topbar from "@/components/Topbar.astro";
 import { getDueFlashcards } from "@/lib/services/review";
 
 const { user } = Astro.locals;
@@ -15,9 +16,12 @@ if (user) {
 ---
 
 <Layout title="Learning">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <SpacedReview initialCards={initialCards} client:load />
+  <div class="bg-cosmic min-h-screen p-4">
+    <Topbar />
+    <div class="flex justify-center pt-8">
+      <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+        <SpacedReview initialCards={initialCards} client:load />
+      </div>
     </div>
   </div>
 </Layout>

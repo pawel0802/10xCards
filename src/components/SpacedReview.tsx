@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Eye, RotateCcw, Minus, ThumbsUp, Zap, Home } from "lucide-react";
 
-type DueFlashcard = { id: string; front: string; back: string };
+interface DueFlashcard {
+  id: string;
+  front: string;
+  back: string;
+}
 
 interface SpacedReviewProps {
   initialCards?: DueFlashcard[];
@@ -28,27 +33,27 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
     setLoading(true);
     setError(null);
     try {
-        console.debug('SpacedReview: loadCards start');
-        const url = `/api/learning/due?limit=${batchSize}`;
-        console.debug('SpacedReview: fetching', url);
-        const res = await fetch(url);
-        console.debug('SpacedReview: fetch status', res.status);
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-          throw new Error(data.error || `Failed to load (${res.status})`);
-        }
-        const data = await res.json();
-        const loaded = Array.isArray(data) ? data : data.cards ?? [];
-        console.debug('SpacedReview: loaded count', loaded.length);
-        setCards(loaded);
-        setCurrentIdx(0);
-      } catch (e: any) {
-        console.error('SpacedReview: load error', e);
-        setError(e.message || "Failed to load cards.");
-      } finally {
-        setLoading(false);
+      console.debug("SpacedReview: loadCards start");
+      const url = `/api/learning/due?limit=${batchSize}`;
+      console.debug("SpacedReview: fetching", url);
+      const res = await fetch(url);
+      console.debug("SpacedReview: fetch status", res.status);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        throw new Error(data.error || `Failed to load (${res.status})`);
       }
+      const data = await res.json();
+      const loaded = Array.isArray(data) ? data : (data.cards ?? []);
+      console.debug("SpacedReview: loaded count", loaded.length);
+      setCards(loaded);
+      setCurrentIdx(0);
+    } catch (e: any) {
+      console.error("SpacedReview: load error", e);
+      setError(e.message || "Failed to load cards.");
+    } finally {
+      setLoading(false);
     }
+  }
 
   async function submitRating(rating: number) {
     if (!cards[currentIdx]) return;
@@ -97,8 +102,9 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
               setError(null);
               loadCards();
             }}
-            className="rounded bg-blue-600 px-3 py-1 text-white"
+            className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white"
           >
+            <RotateCcw className="size-4" />
             Retry
           </button>
         </div>
@@ -106,23 +112,22 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
     );
 
   if (cards.length === 0)
-    return (
-      <div className="text-center text-lg font-semibold text-white/80">All caught up! 🎉</div>
-    );
+    return <div className="text-center text-lg font-semibold text-white/80">All caught up! 🎉</div>;
 
   if (currentIdx >= cards.length)
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl w-full max-w-xs">
-          <h2 className="text-xl font-bold mb-2">Review Complete!</h2>
+        <div className="w-full max-w-xs rounded-2xl border border-gray-200/80 bg-gray-200 p-6 text-center text-gray-900 shadow-2xl">
+          <h2 className="mb-2 text-xl font-bold">Review Complete!</h2>
           <div className="mb-4">All cards processed.</div>
           <button
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 mt-4"
+            className="mt-4 inline-flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             onClick={() => {
               if (typeof window !== "undefined") window.location.href = "/dashboard";
             }}
             type="button"
           >
+            <Home className="size-4" />
             Finish
           </button>
         </div>
@@ -133,33 +138,41 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
   const total = cards.length;
 
   const ratings = [
-    { label: "Again", value: 1, className: "bg-red-600 hover:bg-red-700" },
-    { label: "Hard", value: 2, className: "bg-yellow-600 hover:bg-yellow-700" },
-    { label: "Good", value: 3, className: "bg-blue-600 hover:bg-blue-700" },
-    { label: "Easy", value: 4, className: "bg-green-600 hover:bg-green-700" },
+    { label: "Again", value: 1, className: "bg-red-600 hover:bg-red-700", icon: <RotateCcw className="size-4" /> },
+    { label: "Hard", value: 2, className: "bg-yellow-600 hover:bg-yellow-700", icon: <Minus className="size-4" /> },
+    { label: "Good", value: 3, className: "bg-blue-600 hover:bg-blue-700", icon: <ThumbsUp className="size-4" /> },
+    { label: "Easy", value: 4, className: "bg-green-600 hover:bg-green-700", icon: <Zap className="size-4" /> },
   ];
 
   return (
     <div className="px-4 py-8">
       <div className="mb-4 flex items-center gap-4">
-        <div className="text-sm text-white font-medium">Card {currentIdx + 1} of {total}</div>
-        <div className="flex-1 h-2 bg-gray-200 rounded">
-          <div className="h-2 bg-blue-500 rounded" style={{ width: `${((currentIdx + 1) / total) * 100}%` }} />
+        <div className="text-sm font-medium text-white">
+          Card {currentIdx + 1} of {total}
+        </div>
+        <div className="h-2 flex-1 rounded bg-gray-200">
+          <div className="h-2 rounded bg-blue-500" style={{ width: `${((currentIdx + 1) / total) * 100}%` }} />
         </div>
       </div>
 
-      <div className="rounded border p-4 mb-4 bg-white/5">
+      <div className="mb-4 rounded border bg-white/5 p-4">
         <div className="mb-2 text-lg font-semibold text-white">{card.front}</div>
         {showBack && <div className="mb-2 text-base text-white/90">{card.back}</div>}
         {!showBack && (
-          <button className="mt-2 rounded bg-white/10 px-3 py-1 text-sm text-white" onClick={() => setShowBack(true)}>
+          <button
+            className="mt-2 inline-flex items-center gap-2 rounded bg-white/10 px-3 py-1 text-sm text-white"
+            onClick={() => {
+              setShowBack(true);
+            }}
+          >
+            <Eye className="size-4" />
             Show answer
           </button>
         )}
       </div>
 
       {error && cards.length > 0 && (
-        <div className="text-red-500 mb-2">
+        <div className="mb-2 text-red-500">
           <div>{error}</div>
           {lastRatingAttempt !== null && (
             <div className="mt-2">
@@ -168,8 +181,9 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
                   setError(null);
                   submitRating(lastRatingAttempt);
                 }}
-                className="rounded bg-blue-600 px-3 py-1 text-white"
+                className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white"
               >
+                <RotateCcw className="size-4" />
                 Retry
               </button>
             </div>
@@ -184,8 +198,13 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
             type="button"
             disabled={submitting}
             onClick={() => submitRating(r.value)}
-            className={cn("rounded px-4 py-2 text-white", r.className, submitting && "opacity-50 cursor-not-allowed")}
+            className={cn(
+              "inline-flex items-center gap-2 rounded px-4 py-2 text-white",
+              r.className,
+              submitting && "cursor-not-allowed opacity-50",
+            )}
           >
+            {r.icon}
             {r.label}
           </button>
         ))}
