@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Pencil, Trash2, ChevronLeft, ChevronRight, Sparkles, Home } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Flashcard } from "@/types";
 import EditFlashcardModal from "@/components/EditFlashcardModal";
@@ -111,15 +111,6 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
               <a href="/generate">
                 <Sparkles className="size-4" />
                 Generate flashcards
-              </a>
-            </Button>
-            <Button
-              asChild
-              className="inline-flex items-center gap-2 rounded bg-[#7f1d1d] px-4 py-2 text-white hover:bg-[#581313]"
-            >
-              <a href="/dashboard">
-                <Home className="size-4" />
-                Back
               </a>
             </Button>
           </div>
@@ -240,15 +231,6 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
             Delete Selected
           </Button>
         )}
-        <Button
-          asChild
-          className="inline-flex items-center gap-2 rounded bg-[#7f1d1d] px-4 py-2 text-white hover:bg-[#581313]"
-        >
-          <a href="/dashboard">
-            <Home className="size-4" />
-            Back
-          </a>
-        </Button>
       </div>
 
       {showMassDeleteModal && (

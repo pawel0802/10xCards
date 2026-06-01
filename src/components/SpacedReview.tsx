@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Eye, RotateCcw, Minus, ThumbsUp, Zap, Home } from "lucide-react";
+import { Eye, RotateCcw, Home } from "lucide-react";
 
 interface DueFlashcard {
   id: string;
@@ -138,10 +138,10 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
   const total = cards.length;
 
   const ratings = [
-    { label: "Again", value: 1, className: "bg-red-600 hover:bg-red-700", icon: <RotateCcw className="size-4" /> },
-    { label: "Hard", value: 2, className: "bg-yellow-600 hover:bg-yellow-700", icon: <Minus className="size-4" /> },
-    { label: "Good", value: 3, className: "bg-blue-600 hover:bg-blue-700", icon: <ThumbsUp className="size-4" /> },
-    { label: "Easy", value: 4, className: "bg-green-600 hover:bg-green-700", icon: <Zap className="size-4" /> },
+    { label: "Again", value: 1, className: "bg-red-600 hover:bg-red-700" },
+    { label: "Hard", value: 2, className: "bg-yellow-600 hover:bg-yellow-700" },
+    { label: "Good", value: 3, className: "bg-blue-600 hover:bg-blue-700" },
+    { label: "Easy", value: 4, className: "bg-green-600 hover:bg-green-700" },
   ];
 
   return (
