@@ -1,9 +1,9 @@
 ---
 project: "10xCards"
 version: 1
-status: draft
+status: complete
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-06-02
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -29,13 +29,13 @@ top_blocker: time
 
 | ID   | Change ID                | Outcome (użytkownik może …)                                                                                           | Prerequisites | PRD refs                                                         | Status   |
 | ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- | -------- |
-| F-01 | flashcard-data-schema    | (foundation) tabele flashcards i review_logs gotowe w Supabase z RLS; typy TypeScript dostępne w src/types.ts         | —             | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, NFR (prywatność) | ready    |
-| S-01 | ai-generation-and-review | wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna     | F-01          | FR-002, FR-003, US-01                                            | proposed |
-| S-02 | manual-card-creation     | ręcznie stworzyć fiszkę z pytaniem i odpowiedzią                                                                      | F-01          | FR-004                                                           | proposed |
-| S-03 | card-management          | przeglądać pełną listę swoich fiszek, edytować treść dowolnej fiszki lub ją usunąć                                    | F-01          | FR-005                                                           | proposed |
-| S-04 | spaced-repetition-review | rozpocząć i ukończyć sesję powtórek spaced repetition, z kartami zaplanowanymi przez algorytm SR na podstawie wyników | S-01          | FR-006                                                           | proposed |
-| S-05 | dashboard-landing        | po zalogowaniu wejść na dashboard: centrum nawigacyjne z linkami do generatora kart, zarządzania kartami, sesji SR i wylogowania | —             | —                                                                | proposed |
-| S-06 | ui-ux-improvements      | poprawki UI/UX: Finish button dostępny na każdej stronie (oprócz dashboardu); na /learning zamiast "No flashcards to review." tekst "All caught up!"; nowoczesne kolory przycisków i ikony dla kluczowych CTA | —             | —                                                                | proposed |
+| F-01 | flashcard-data-schema    | (foundation) tabele flashcards i review_logs gotowe w Supabase z RLS; typy TypeScript dostępne w src/types.ts         | —             | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, NFR (prywatność) | done     |
+| S-01 | ai-generation-and-review | wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna     | F-01          | FR-002, FR-003, US-01                                            | done     |
+| S-02 | manual-card-creation     | ręcznie stworzyć fiszkę z pytaniem i odpowiedzią                                                                      | F-01          | FR-004                                                           | done     |
+| S-03 | card-management          | przeglądać pełną listę swoich fiszek, edytować treść dowolnej fiszki lub ją usunąć                                    | F-01          | FR-005                                                           | done     |
+| S-04 | spaced-repetition-review | rozpocząć i ukończyć sesję powtórek spaced repetition, z kartami zaplanowanymi przez algorytm SR na podstawie wyników | S-01          | FR-006                                                           | done     |
+| S-05 | dashboard-landing        | po zalogowaniu wejść na dashboard: centrum nawigacyjne z linkami do generatora kart, zarządzania kartami, sesji SR i wylogowania | —             | —                                                                | done     |
+| S-06 | ui-ux-improvements      | poprawki UI/UX: Finish button dostępny na każdej stronie (oprócz dashboardu); na /learning zamiast "No flashcards to review." tekst "All caught up!"; nowoczesne kolory przycisków i ikony dla kluczowych CTA | —             | —                                                                | done     |
 
 ## Streams
 
@@ -156,13 +156,13 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 | Roadmap ID | Change ID                | Suggested issue title                        | Ready for `/10x-plan` | Notes                                 |
 | ---------- | ------------------------ | -------------------------------------------- | --------------------- | ------------------------------------- |
-| F-01       | flashcard-data-schema    | Define flashcard and review schema with RLS  | yes                   | Run `/10x-plan flashcard-data-schema` |
-| S-01       | ai-generation-and-review | AI flashcard generation and candidate review | no                    | Needs F-01 done first                 |
-| S-02       | manual-card-creation     | Manual flashcard creation form               | no                    | Needs F-01 done first                 |
-| S-03       | card-management          | Flashcard list, edit, and delete             | no                    | Needs F-01 done first                 |
-| S-04       | spaced-repetition-review | Spaced repetition review session             | no                    | Needs S-01 done first                 |
-| S-05       | dashboard-landing       | Dashboard landing page with navigation and sign-out | no                    | Depends on auth (baseline); link targets may be placeholders until targets implemented |
-| S-06       | ui-ux-improvements      | UI/UX polish: Finish button everywhere (except dashboard), 'All caught up!' message, modern button colors and icons | no                    | Cosmetic; may require design tokens or theme variables |
+| F-01       | flashcard-data-schema    | Define flashcard and review schema with RLS  | no                    | Implemented                            |
+| S-01       | ai-generation-and-review | AI flashcard generation and candidate review | no                    | Implemented                            |
+| S-02       | manual-card-creation     | Manual flashcard creation form               | no                    | Implemented                            |
+| S-03       | card-management          | Flashcard list, edit, and delete             | no                    | Implemented                            |
+| S-04       | spaced-repetition-review | Spaced repetition review session             | no                    | Implemented                            |
+| S-05       | dashboard-landing       | Dashboard landing page with navigation and sign-out | no                    | Implemented                            |
+| S-06       | ui-ux-improvements      | UI/UX polish: Finish button everywhere (except dashboard), 'All caught up!' message, modern button colors and icons | no                    | Implemented                            |
 
 ## Open Roadmap Questions
 
@@ -179,4 +179,4 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 
 ## Done
 
-(Empty. `/10x-archive` appends entries here when a matching change is archived.)
+All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
