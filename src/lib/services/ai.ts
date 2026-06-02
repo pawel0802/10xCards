@@ -53,17 +53,35 @@ export async function generateFlashcardsFromText(text: string): Promise<Flashcar
       });
       if (response.ok) break;
       lastError = new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
-    } catch (err) {
+    } catch (err: unknown) {
       lastError = err;
     }
     if (attempt < 3) await new Promise((res) => setTimeout(res, 500 * attempt));
   }
   if (!response?.ok) {
-    throw lastError || new Error("OpenRouter API call failed");
+    const msg = (() => {
+      if (lastError instanceof Error) return lastError.message;
+      if (typeof lastError === "string") return lastError;
+      try {
+        return lastError != null ? JSON.stringify(lastError) : "OpenRouter API call failed";
+      } catch {
+        return String(lastError);
+      }
+    })();
+    throw new Error(msg);
   }
 
-  const data = await response.json();
-  const content: string = data?.choices?.[0]?.message?.content ?? "";
+  const data: unknown = await response.json();
+  let content = "";
+  if (data && typeof data === "object" && "choices" in data) {
+    const d = data as Record<string, unknown>;
+    const choices = d.choices;
+    if (Array.isArray(choices) && choices.length > 0) {
+      const first = choices[0] as Record<string, unknown> | undefined;
+      const message = first?.message as Record<string, unknown> | undefined;
+      if (message && typeof message.content === "string") content = message.content;
+    }
+  }
 
   let parsed: unknown;
   try {

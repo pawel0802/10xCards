@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase";
-import type { Flashcard } from "@/types";
+import type { Flashcard, ReviewLog } from "@/types";
 import type { AstroCookies } from "astro";
 import { applyRating } from "@/lib/scheduler";
 
 // Helper: log Supabase errors for monitoring (per lessons.md)
-function logSupabaseError(context: string, error: any) {
+function logSupabaseError(context: string, error: unknown): void {
   console.error(`[Supabase] ${context}:`, error);
 }
 
@@ -14,37 +14,44 @@ export async function getDueFlashcards(
   requestHeaders?: Headers,
   cookies?: AstroCookies,
 ): Promise<{ data: Flashcard[]; error?: string }> {
-  const supabase = createClient(requestHeaders!, cookies!);
+  if (!requestHeaders || !cookies) {
+    return { data: [], error: "Missing request headers or cookies" };
+  }
+  const supabase = createClient(requestHeaders, cookies);
   if (!supabase) return { data: [], error: "Supabase client not initialized" };
 
   const nowIso = new Date().toISOString();
-  const { data: dueNow, error: errNow } = await supabase
+  const dueNowRes = (await supabase
     .from("flashcards")
     .select("*")
     .eq("user_id", userId)
     .lte("due_date", nowIso)
     .order("due_date", { ascending: true })
-    .limit(limit);
+    .limit(limit)) as { data: Flashcard[] | null; error?: unknown };
+  const dueNow = dueNowRes.data;
+  const errNow = dueNowRes.error;
 
   if (errNow) logSupabaseError("getDueFlashcards.dueNow", errNow);
 
-  let results: Flashcard[] = (dueNow as Flashcard[]) || [];
+  let results: Flashcard[] = dueNow ?? [];
 
   if (results.length < limit) {
     const remaining = limit - results.length;
-    const { data: nullDue, error: errNull } = await supabase
+    const nullDueRes = (await supabase
       .from("flashcards")
       .select("*")
       .eq("user_id", userId)
       .is("due_date", null)
       .order("created_at", { ascending: true })
-      .limit(remaining);
+      .limit(remaining)) as { data: Flashcard[] | null; error?: unknown };
+    const nullDue = nullDueRes.data;
+    const errNull = nullDueRes.error;
 
     if (errNull) logSupabaseError("getDueFlashcards.nullDue", errNull);
-    results = results.concat((nullDue as Flashcard[]) || []);
+    results = results.concat(nullDue ?? []);
   }
 
-  return { data: results || [], error: undefined };
+  return { data: results, error: undefined };
 }
 
 export async function submitReview(
@@ -54,23 +61,28 @@ export async function submitReview(
   requestHeaders?: Headers,
   cookies?: AstroCookies,
   idempotencyKey?: string | null,
-): Promise<{ reviewId?: string; updatedFlashcardFields?: any; deduped?: boolean; error?: string }> {
-  const supabase = createClient(requestHeaders!, cookies!);
+): Promise<{ reviewId?: unknown; updatedFlashcardFields?: Partial<Flashcard>; deduped?: boolean; error?: string }> {
+  if (!requestHeaders || !cookies) {
+    return { error: "Missing request headers or cookies" };
+  }
+  const supabase = createClient(requestHeaders, cookies);
   if (!supabase) return { error: "Supabase client not initialized" };
 
   try {
     // Server-side dedupe window (5s)
-    const { data: last, error: lastErr } = await supabase
+    const lastRes = (await supabase
       .from("review_logs")
       .select("id, reviewed_at")
       .eq("user_id", userId)
       .eq("flashcard_id", flashcardId)
       .order("reviewed_at", { ascending: false })
-      .limit(1);
+      .limit(1)) as { data: ReviewLog[] | null; error?: unknown };
+    const last = lastRes.data;
+    const lastErr = lastRes.error;
 
     if (lastErr) logSupabaseError("submitReview.last", lastErr);
-    if (last && (last as any).length) {
-      const lr = (last as any)[0];
+    if (last && last.length > 0) {
+      const lr = last[0];
       const elapsedMs = Date.now() - new Date(lr.reviewed_at).getTime();
       if (elapsedMs >= 0 && elapsedMs < 5000) {
         return { reviewId: lr.id, deduped: true };
@@ -78,20 +90,29 @@ export async function submitReview(
     }
 
     // Load flashcard row
-    const { data: cardRow, error: cardErr } = await supabase
+    const cardRowRes = (await supabase
       .from("flashcards")
       .select("*")
       .eq("id", flashcardId)
       .eq("user_id", userId)
-      .single();
+      .single()) as { data: Flashcard | null; error?: unknown };
+    const cardRow = cardRowRes.data;
+    const cardErr = cardRowRes.error;
 
-    if (cardErr || !cardRow) {
-      if (cardErr) logSupabaseError("submitReview.cardRow", cardErr);
-      return { error: cardErr?.message || "Flashcard not found" };
+    if (cardErr) {
+      logSupabaseError("submitReview.cardRow", cardErr);
+      const cardErrMessage = (cardErr as { message?: string }).message;
+      return { error: cardErrMessage ?? "Flashcard not found" };
+    }
+    if (!cardRow) {
+      return { error: "Flashcard not found" };
     }
 
     // Compute next state via scheduler wrapper
-    const { updatedFlashcardFields } = await applyRating(cardRow as Flashcard, rating);
+    const { updatedFlashcardFields } = applyRating(cardRow, rating) as {
+      updatedFlashcardFields: Partial<Flashcard> & { due_date?: string | null; last_review?: string | null };
+      reviewLogEntry?: unknown;
+    };
 
     const p_next_state = {
       state: updatedFlashcardFields.state,
@@ -101,10 +122,10 @@ export async function submitReview(
       lapses: updatedFlashcardFields.lapses,
     };
 
-    const p_next_due = updatedFlashcardFields.due_date || null;
+    const p_next_due = updatedFlashcardFields.due_date ?? null;
 
     // Call DB RPC to persist atomically
-    const rpcParams: any = {
+    const rpcParams: Record<string, unknown> = {
       p_user_id: userId,
       p_flashcard_id: flashcardId,
       p_rating: rating,
@@ -113,15 +134,22 @@ export async function submitReview(
       p_idempotency_key: idempotencyKey ?? null,
     };
 
-    const { data: rpcData, error: rpcErr } = await supabase.rpc("record_review", rpcParams);
+    const rpcRes = (await supabase.rpc("record_review", rpcParams)) as { data?: unknown; error?: unknown };
+    const rpcData = rpcRes.data;
+    const rpcErr = rpcRes.error;
     if (rpcErr) {
       logSupabaseError("submitReview.rpc", rpcErr);
-      return { error: rpcErr.message };
+      const rpcErrMessage = (rpcErr as { message?: string }).message;
+      const rpcErrString = typeof rpcErr === "string" ? rpcErr : JSON.stringify(rpcErr);
+      return { error: rpcErrMessage ?? rpcErrString };
     }
 
     return { reviewId: rpcData ?? null, updatedFlashcardFields };
-  } catch (e: any) {
+  } catch (e: unknown) {
     logSupabaseError("submitReview.exception", e);
-    return { error: e?.message ?? String(e) };
+    if (e instanceof Error) {
+      return { error: e.message };
+    }
+    return { error: String(e) };
   }
 }

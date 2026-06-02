@@ -12,8 +12,8 @@ const mockFetch = (content: string, ok = true) =>
       ok,
       status: ok ? 200 : 500,
       statusText: ok ? "OK" : "Internal Error",
-      json: async () => ({ choices: [{ message: { content } }] }),
-      text: async () => content,
+      json: () => Promise.resolve({ choices: [{ message: { content } }] }),
+      text: () => Promise.resolve(content),
     } as Response),
   );
 

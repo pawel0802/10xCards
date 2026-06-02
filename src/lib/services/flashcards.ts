@@ -3,7 +3,7 @@ import type { Flashcard, FlashcardUpdateDto } from "@/types";
 import type { AstroCookies } from "astro";
 
 // Helper: log Supabase errors for monitoring (per lessons.md)
-function logSupabaseError(context: string, error: any) {
+function logSupabaseError(context: string, error: unknown) {
   // Replace with your preferred logging/monitoring solution
   console.error(`[Supabase] ${context}:`, error);
 }
@@ -21,14 +21,15 @@ export async function getFlashcards(
   }
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
-  const { data, count, error } = await supabase
+  const res = (await supabase
     .from("flashcards")
     .select("*", { count: "exact" })
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .range(from, to);
+    .range(from, to)) as { data: Flashcard[] | null; count: number | null; error?: { message?: string } | null };
+  const { data, count, error } = res;
   if (error) logSupabaseError("getFlashcards", error);
-  return { data: data || [], count: count || 0, error: error?.message };
+  return { data: data ?? [], count: count ?? 0, error: error?.message };
 }
 
 export async function updateFlashcard(
@@ -42,15 +43,16 @@ export async function updateFlashcard(
   if (!supabase) {
     return { error: "Supabase client not initialized" };
   }
-  const { data, error } = await supabase
+  const res = (await supabase
     .from("flashcards")
     .update(update)
     .eq("id", id)
     .eq("user_id", userId)
     .select()
-    .single();
+    .single()) as { data: Flashcard | null; error?: { message?: string } | null };
+  const { data, error } = res;
   if (error) logSupabaseError("updateFlashcard", error);
-  return { data: data as Flashcard, error: error?.message };
+  return { data: data ?? undefined, error: error?.message };
 }
 
 export async function deleteFlashcards(
@@ -63,7 +65,11 @@ export async function deleteFlashcards(
   if (!supabase) {
     return { count: 0, error: "Supabase client not initialized" };
   }
-  const { count, error } = await supabase.from("flashcards").delete().eq("user_id", userId).in("id", ids);
+  const res = (await supabase.from("flashcards").delete().eq("user_id", userId).in("id", ids)) as {
+    count: number | null;
+    error?: { message?: string } | null;
+  };
+  const { count, error } = res;
   if (error) logSupabaseError("deleteFlashcards", error);
-  return { count: count || 0, error: error?.message };
+  return { count: count ?? 0, error: error?.message };
 }

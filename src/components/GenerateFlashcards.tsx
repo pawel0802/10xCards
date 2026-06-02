@@ -6,13 +6,16 @@ export default function GenerateFlashcards() {
   const [candidates] = useState<{ id: string; front: string; back: string }[]>([]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate =
+  type NavigateFn = (url: string) => void;
+  const navigate: NavigateFn =
     typeof window !== "undefined"
-      ? (window as any).navigate ||
+      ? ((window as Window & { navigate?: NavigateFn }).navigate ??
         ((url: string) => {
-          window.location.href = url;
-        })
-      : () => {};
+          window.location.assign(url);
+        }))
+      : (_url: string) => {
+          void 0;
+        };
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -23,20 +26,26 @@ export default function GenerateFlashcards() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: inputText }),
       });
+      const data = (await res.json()) as {
+        flashcards?: { front: string; back: string }[];
+        error?: string;
+      };
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Unknown error");
+        throw new Error(data.error ?? "Unknown error");
       }
-      const data = await res.json();
-      const generated = (data.flashcards as { front: string; back: string }[]).map((c, i) => ({
+      const generated = (data.flashcards ?? []).map((c) => ({
         id: crypto.randomUUID(),
         front: c.front,
         back: c.back,
       }));
       try {
         localStorage.setItem("reviewCandidates", JSON.stringify(generated));
-      } catch (storageErr: any) {
-        if (storageErr?.name === "QuotaExceededError") {
+      } catch (storageErr: unknown) {
+        if (
+          typeof DOMException !== "undefined" &&
+          storageErr instanceof DOMException &&
+          storageErr.name === "QuotaExceededError"
+        ) {
           setError("Storage limit reached. Please clear some space in your browser and try again.");
         } else {
           setError("Could not save flashcards to your browser. Please check your storage settings.");
@@ -44,7 +53,9 @@ export default function GenerateFlashcards() {
         setGenerating(false);
         return;
       }
-      setTimeout(() => navigate("/review"), 500);
+      setTimeout(() => {
+        navigate("/review");
+      }, 500);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate flashcards");
     } finally {
@@ -80,7 +91,9 @@ export default function GenerateFlashcards() {
         </button>
         <button
           className="inline-flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
-          onClick={() => navigate("/manual-create")}
+          onClick={() => {
+            navigate("/manual-create");
+          }}
           type="button"
         >
           <PenLine className="size-4" />

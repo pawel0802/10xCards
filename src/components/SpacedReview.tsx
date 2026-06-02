@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Eye, RotateCcw, Home, CheckCircle2 } from "lucide-react";
 
@@ -22,14 +22,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
   const [showBack, setShowBack] = useState(false);
   const [lastRatingAttempt, setLastRatingAttempt] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (initialCards.length === 0) {
-      loadCards();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function loadCards() {
+  const loadCards = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -39,21 +32,58 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
       const res = await fetch(url);
       console.debug("SpacedReview: fetch status", res.status);
       if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        throw new Error(data.error || `Failed to load (${res.status})`);
+        let errorMsg = `Failed to load (${res.status})`;
+        try {
+          const errJson: unknown = await res.json();
+          if (typeof errJson === "object" && errJson !== null) {
+            const obj = errJson as Record<string, unknown>;
+            if (typeof obj.error === "string") errorMsg = obj.error;
+            else if (typeof obj.message === "string") errorMsg = obj.message;
+          }
+        } catch {
+          // ignore
+        }
+        throw new Error(errorMsg);
       }
-      const data = await res.json();
-      const loaded = Array.isArray(data) ? data : (data.cards ?? []);
+
+      const raw: unknown = await res.json();
+      const loaded: DueFlashcard[] = (() => {
+        const isDueFlashcard = (x: unknown): x is DueFlashcard => {
+          if (typeof x !== "object" || x === null) return false;
+          const obj = x as Record<string, unknown>;
+          return typeof obj.id === "string" && typeof obj.front === "string" && typeof obj.back === "string";
+        };
+
+        const isDueFlashcardArray = (x: unknown): x is DueFlashcard[] => Array.isArray(x) && x.every(isDueFlashcard);
+
+        if (isDueFlashcardArray(raw)) return raw;
+        if (typeof raw === "object" && raw !== null) {
+          const obj = raw as Record<string, unknown>;
+          const maybeCards = obj.cards;
+          if (isDueFlashcardArray(maybeCards)) return maybeCards;
+        }
+        return [];
+      })();
+
       console.debug("SpacedReview: loaded count", loaded.length);
       setCards(loaded);
       setCurrentIdx(0);
-    } catch (e: any) {
-      console.error("SpacedReview: load error", e);
-      setError(e.message || "Failed to load cards.");
+    } catch (err: unknown) {
+      console.error("SpacedReview: load error", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  }
+  }, [batchSize]);
+
+  useEffect(() => {
+    if (initialCards.length === 0) {
+      void (async () => {
+        await loadCards();
+      })();
+    }
+  }, [initialCards.length, loadCards]);
 
   async function submitRating(rating: number) {
     if (!cards[currentIdx]) return;
@@ -70,15 +100,26 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
       if (res.status === 409) {
         // dedupe; treat as success
       } else if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        throw new Error(data.error || `Failed to submit (${res.status})`);
+        let errorMsg = `Failed to submit (${res.status})`;
+        try {
+          const errJson: unknown = await res.json();
+          if (typeof errJson === "object" && errJson !== null) {
+            const obj = errJson as Record<string, unknown>;
+            if (typeof obj.error === "string") errorMsg = obj.error;
+            else if (typeof obj.message === "string") errorMsg = obj.message;
+          }
+        } catch {
+          // ignore
+        }
+        throw new Error(errorMsg);
       }
       // success: advance
       setShowBack(false);
       setLastRatingAttempt(null);
       setCurrentIdx((i) => i + 1);
-    } catch (e: any) {
-      setError(e.message || "Failed to submit rating. Please try again.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -100,7 +141,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
           <button
             onClick={() => {
               setError(null);
-              loadCards();
+              void loadCards();
             }}
             className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white"
           >
@@ -126,7 +167,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
           <button
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
             onClick={() => {
-              if (typeof window !== "undefined") window.location.href = "/dashboard";
+              if (typeof window !== "undefined") window.location.assign("/dashboard");
             }}
             type="button"
           >
@@ -182,7 +223,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
               <button
                 onClick={() => {
                   setError(null);
-                  submitRating(lastRatingAttempt);
+                  void submitRating(lastRatingAttempt);
                 }}
                 className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white"
               >
@@ -200,7 +241,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
             key={r.value}
             type="button"
             disabled={submitting}
-            onClick={() => submitRating(r.value)}
+            onClick={() => void submitRating(r.value)}
             className={cn(
               "inline-flex items-center gap-2 rounded px-4 py-2 text-white",
               r.className,

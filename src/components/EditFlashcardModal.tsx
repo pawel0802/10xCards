@@ -27,15 +27,15 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: flashcard.id, update: { front, back } }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { error?: string };
       if (res.ok) {
         onSave({ ...flashcard, front, back, source: flashcard.source === "auto" ? "hybrid" : flashcard.source });
         onClose();
       } else {
-        setError(data.error || "Failed to save changes");
+        setError(data.error ?? "Failed to save changes");
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setSaving(false);
     }

@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { applyRating } from "@/lib/scheduler";
+import type { Flashcard } from "@/types";
 
 describe("SR integration smoke", () => {
-  it("scheduler.applyRating smoke test", async () => {
+  it("scheduler.applyRating smoke test", () => {
     const card = {
       id: "1",
       user_id: "u",
@@ -18,9 +19,9 @@ describe("SR integration smoke", () => {
       last_review: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    } as any;
+    } as Partial<Flashcard>;
 
-    const res = await applyRating(card, 3);
+    const res = applyRating(card, 3);
     expect(res).toBeDefined();
     expect(res.updatedFlashcardFields).toBeDefined();
     expect(res.reviewLogEntry).toBeDefined();

@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { applyRating } from "./scheduler";
+import type { Flashcard } from "@/types";
 
 describe("scheduler.applyRating", () => {
-  it("increments reps and returns updated fields", async () => {
+  it("increments reps and returns updated fields", () => {
     const card = {
       id: "1",
       user_id: "u",
@@ -18,9 +19,9 @@ describe("scheduler.applyRating", () => {
       last_review: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    } as any;
+    } as Partial<Flashcard>;
 
-    const res = await applyRating(card, 3);
+    const res = applyRating(card, 3);
     expect(res).toBeDefined();
     expect(res.updatedFlashcardFields).toBeDefined();
     expect(typeof res.updatedFlashcardFields.reps).toBe("number");

@@ -20,7 +20,20 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
       const stored = localStorage.getItem("reviewCandidates");
       if (stored) {
         try {
-          return JSON.parse(stored);
+          const parsed: unknown = JSON.parse(stored);
+          if (
+            Array.isArray(parsed) &&
+            parsed.every(
+              (it) =>
+                typeof (it as Record<string, unknown>).id === "string" &&
+                typeof (it as Record<string, unknown>).front === "string" &&
+                typeof (it as Record<string, unknown>).back === "string",
+            )
+          ) {
+            return parsed as FlashcardCandidate[];
+          } else {
+            setStorageError("Could not load flashcards from your browser. Data may be corrupted.");
+          }
         } catch {
           setStorageError("Could not load flashcards from your browser. Data may be corrupted.");
         }
@@ -38,6 +51,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
     const handler = (e: BeforeUnloadEvent) => {
       if (hasChanges && currentIdx < candidates.length) {
         e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         e.returnValue = "";
       }
     };
@@ -63,12 +77,12 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           cards: [{ front: card.front, back: card.back, source: card.status === "edited" ? "hybrid" : "auto" }],
         }),
       });
+      const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Unknown error");
+        throw new Error(data.error ?? "Unknown error");
       }
       setHasChanges(false);
-    } catch (e) {
+    } catch (_e) {
       setError("Failed to save card. Please try again.");
     } finally {
       setLoading(false);
@@ -101,12 +115,12 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
           })),
         }),
       });
+      const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Unknown error");
+        throw new Error(data.error ?? "Unknown error");
       }
       setHasChanges(false);
-    } catch (e) {
+    } catch (_e) {
       setError("Failed to save changes. Please try again.");
     } finally {
       setLoading(false);
@@ -163,7 +177,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  window.location.href = "/dashboard";
+                  window.location.assign("/dashboard");
                 }
               }}
               type="button"
@@ -206,7 +220,7 @@ export default function ReviewFlashcards({ initialCandidates }: ReviewFlashcards
                 await handleAccept(candidates[currentIdx].id);
                 setCurrentIdx((idx) => idx + 1);
               }}
-              disabled={loading || candidates[currentIdx].status === "accepted"}
+              disabled={candidates[currentIdx].status === "accepted"}
             >
               <CheckCircle className="size-4" />
               Accept

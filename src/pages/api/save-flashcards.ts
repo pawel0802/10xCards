@@ -25,7 +25,7 @@ export const POST: APIRoute = async (context) => {
   if (!supabase) {
     return new Response(JSON.stringify({ error: "Supabase client not initialized" }), { status: 500 });
   }
-  const body = await request.json();
+  const body: unknown = await request.json();
   const parsed = SaveFlashcardsSchema.safeParse(body);
   if (!parsed.success) {
     return new Response(
@@ -38,17 +38,17 @@ export const POST: APIRoute = async (context) => {
   }
   const { cards } = parsed.data;
   // Store cards in Supabase (table: flashcards)
-  const { error } = await supabase.from("flashcards").insert(
-    cards.map((card: { front: string; back: string; source?: string }) => ({
+  const insertRes = (await supabase.from("flashcards").insert(
+    cards.map((card) => ({
       user_id: user.id,
       front: card.front,
       back: card.back,
       source: card.source === "manual" ? "manual" : card.source === "hybrid" ? "hybrid" : "auto",
     })),
-  );
-  if (error) {
-    console.error(`[Supabase] Failed to insert flashcards for user ${user.id}:`, error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  )) as { error?: { message?: string } | null };
+  if (insertRes.error) {
+    console.error(`[Supabase] Failed to insert flashcards for user ${user.id}:`, insertRes.error);
+    return new Response(JSON.stringify({ error: insertRes.error.message ?? "Insert failed" }), { status: 500 });
   }
   return new Response(JSON.stringify({ success: true }), { status: 200 });
 };

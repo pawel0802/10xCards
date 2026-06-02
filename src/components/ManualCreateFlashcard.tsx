@@ -15,8 +15,8 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
 
   const isValid = front.trim().length > 0 && front.length <= 300 && back.trim().length > 0 && back.length <= 300;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(e?: React.SyntheticEvent<HTMLFormElement>) {
+    e?.preventDefault();
     setError(null);
     setSuccess(false);
     if (!isValid) return;
@@ -27,16 +27,16 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cards: [{ front, back, source: "manual" }] }),
       });
+      const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Unknown error");
+        throw new Error(data.error ?? "Unknown error");
       }
       setSuccess(true);
       setFront("");
       setBack("");
       if (onSuccess) onSuccess();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to save card");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save card");
     } finally {
       setSubmitting(false);
     }
@@ -97,8 +97,8 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
               {error && (
                 <button
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
-                  onClick={async () => {
-                    await handleSubmit({ preventDefault: () => {} } as any);
+                  onClick={() => {
+                    void handleSubmit();
                   }}
                   type="button"
                 >
@@ -122,7 +122,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
               <button
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
                 onClick={() => {
-                  if (typeof window !== "undefined") window.location.href = "/dashboard";
+                  if (typeof window !== "undefined") window.location.assign("/dashboard");
                 }}
                 type="button"
               >
@@ -149,7 +149,7 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
           type="button"
           className="inline-flex items-center gap-2 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
           onClick={() => {
-            if (typeof window !== "undefined") window.location.href = "/generate";
+            if (typeof window !== "undefined") window.location.assign("/generate");
           }}
         >
           <ArrowLeft className="size-4" />

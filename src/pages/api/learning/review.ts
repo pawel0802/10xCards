@@ -24,7 +24,7 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify({ error: "Supabase client not initialized" }), { status: 500 });
   }
 
-  const body = await request.json();
+  const body: unknown = await request.json();
   const parsed = ReviewSchema.safeParse(body);
   if (!parsed.success) {
     return new Response(JSON.stringify({ error: "Invalid input", details: z.treeifyError(parsed.error) }), {

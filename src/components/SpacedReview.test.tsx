@@ -7,7 +7,7 @@ afterEach(cleanup);
 
 describe("SpacedReview", () => {
   beforeEach(() => {
-    (global as any).fetch = vi.fn();
+    vi.stubGlobal("fetch", vi.fn());
   });
 
   afterEach(() => {
@@ -15,7 +15,7 @@ describe("SpacedReview", () => {
   });
 
   it("renders initial card and advances on successful review", async () => {
-    (global as any).fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) }));
     render(<SpacedReview initialCards={[{ id: "c1", front: "Q1", back: "A1" }]} />);
     expect(screen.getByText("Card 1 of 1")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Show answer"));
@@ -25,10 +25,17 @@ describe("SpacedReview", () => {
   });
 
   it("shows error on failed submit and allows retry", async () => {
-    (global as any).fetch = vi
-      .fn()
-      .mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({ error: "Server" }) })
-      .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: "Server" }),
+        })
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) }),
+    );
 
     render(<SpacedReview initialCards={[{ id: "c2", front: "Q2", back: "A2" }]} />);
     fireEvent.click(screen.getByText("Show answer"));

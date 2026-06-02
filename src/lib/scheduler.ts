@@ -14,7 +14,41 @@ const GLOBAL_FSRS_PARAMS = {
   relearning_steps: [],
 };
 
-const scheduler = fsrs(GLOBAL_FSRS_PARAMS);
+// Minimal local types for the parts of the fsrs result used here.
+interface CardInput {
+  due: Date;
+  stability: number;
+  difficulty: number;
+  reps: number;
+  lapses: number;
+  state: number;
+  last_review?: Date | undefined;
+}
+
+interface FsrsCardResult {
+  state: number;
+  stability: number;
+  difficulty: number;
+  reps: number;
+  lapses: number;
+  due: Date | string;
+  last_review?: Date | string | undefined;
+}
+
+interface FsrsLog {
+  rating: number;
+  elapsed_days?: number | null;
+  scheduled_days?: number | null;
+}
+
+interface FsrsNextResult {
+  card: FsrsCardResult;
+  log: FsrsLog;
+}
+
+const scheduler = fsrs(GLOBAL_FSRS_PARAMS) as unknown as {
+  next: (card: CardInput, now: Date, rating: Rating) => FsrsNextResult;
+};
 
 function mapClientRating(r: number) {
   // Client uses 4-point scale: 1=Again,2=Hard,3=Good,4=Easy
@@ -32,17 +66,33 @@ function mapClientRating(r: number) {
   }
 }
 
-export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
+function toNumber(v: unknown): number {
+  if (v === undefined || v === null) return 0;
+  if (typeof v === "number") return v;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function toDate(v: unknown, fallback?: Date): Date | undefined {
+  if (v === undefined || v === null) return fallback;
+  if (v instanceof Date) return v;
+  if (typeof v === "string") {
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? fallback : d;
+  }
+  return fallback;
+}
+
+export function applyRating(cardRow: Partial<Flashcard>, ratingNumber: number) {
   // Defensive mapping from DB row -> ts-fsrs card input
   const now = new Date();
   const S_MIN = 1e-3;
 
-  const rawStability = cardRow.stability === undefined || cardRow.stability === null ? 0 : Number(cardRow.stability);
-  const rawDifficulty =
-    cardRow.difficulty === undefined || cardRow.difficulty === null ? 0 : Number(cardRow.difficulty);
-  const rawReps = Number(cardRow.reps ?? 0);
-  const rawLapses = Number(cardRow.lapses ?? 0);
-  const rawState = Number(cardRow.state ?? 0);
+  const rawStability = toNumber(cardRow.stability);
+  const rawDifficulty = toNumber(cardRow.difficulty);
+  const rawReps = toNumber(cardRow.reps);
+  const rawLapses = toNumber(cardRow.lapses);
+  const rawState = toNumber(cardRow.state);
 
   // Normalize difficulty: ts-fsrs expects difficulty in [1,10]. Some existing data may use 0..1 scale.
   let difficulty = rawDifficulty;
@@ -61,56 +111,69 @@ export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
   let stability = rawStability;
   if (stability > 0 && stability < S_MIN) stability = S_MIN;
 
-  const cardInput: any = {
-    due: cardRow.due_date ? new Date(cardRow.due_date) : now,
+  const cardInput: CardInput = {
+    due: toDate(cardRow.due_date, now) ?? now,
     stability: stability,
     difficulty: difficulty,
     reps: rawReps,
     lapses: rawLapses,
     state: rawState,
-    last_review: cardRow.last_review ? new Date(cardRow.last_review) : undefined,
+    last_review: toDate(cardRow.last_review),
   };
 
-  let result: any;
+  let result: FsrsNextResult;
   try {
     result = scheduler.next(cardInput, now, mapClientRating(ratingNumber));
-  } catch (e: any) {
+  } catch (e: unknown) {
     // If scheduler validation fails (e.g. invalid memory state), fall back to treating
     // the card as NEW so the algorithm can initialize sensible defaults.
-    console.error("scheduler.next validation error, falling back to NEW card:", e?.message ?? e, { cardInput });
-    const fallbackInput = { ...cardInput, difficulty: 0, stability: 0, state: 0 };
+
+    let errMsg: string;
+    if (typeof e === "object" && e !== null && "message" in e) {
+      const em = (e as { message?: unknown }).message;
+      errMsg = typeof em === "string" ? em : String(em);
+    } else {
+      errMsg = String(e);
+    }
+
+    console.error("scheduler.next validation error, falling back to NEW card:", errMsg, { cardInput });
+    const fallbackInput: CardInput = { ...cardInput, difficulty: 0, stability: 0, state: 0 };
     result = scheduler.next(fallbackInput, now, mapClientRating(ratingNumber));
   }
 
-  const updatedFlashcardFields = {
+  const dueIso =
+    result.card.due instanceof Date ? result.card.due.toISOString() : new Date(result.card.due).toISOString();
+  const lastReviewIso =
+    result.card.last_review instanceof Date
+      ? result.card.last_review.toISOString()
+      : result.card.last_review
+        ? new Date(result.card.last_review).toISOString()
+        : now.toISOString();
+
+  const updatedFlashcardFields: Partial<Flashcard> & { due_date: string; last_review: string } = {
     state: result.card.state,
     stability: result.card.stability,
     difficulty: result.card.difficulty,
     reps: result.card.reps,
     lapses: result.card.lapses,
-    due_date: result.card.due instanceof Date ? result.card.due.toISOString() : new Date(result.card.due).toISOString(),
-    last_review:
-      result.card.last_review instanceof Date
-        ? result.card.last_review.toISOString()
-        : result.card.last_review
-          ? new Date(result.card.last_review).toISOString()
-          : now.toISOString(),
-  } as any;
+    due_date: dueIso,
+    last_review: lastReviewIso,
+  };
 
   const reviewLogEntry = {
     rating: result.log.rating,
     prior_state: {
-      state: cardRow.state,
-      stability: cardRow.stability,
-      difficulty: cardRow.difficulty,
-      reps: cardRow.reps,
-      lapses: cardRow.lapses,
-      last_review: cardRow.last_review,
-    },
-    elapsed_days: result.log.elapsed_days,
-    scheduled_days: result.log.scheduled_days,
+      state: cardRow.state ?? 0,
+      stability: cardRow.stability ?? 0,
+      difficulty: cardRow.difficulty ?? 0,
+      reps: cardRow.reps ?? 0,
+      lapses: cardRow.lapses ?? 0,
+      last_review: cardRow.last_review ?? null,
+    } as Record<string, unknown>,
+    elapsed_days: result.log.elapsed_days ?? null,
+    scheduled_days: result.log.scheduled_days ?? null,
     reviewed_at: now.toISOString(),
-  } as any;
+  };
 
   return { updatedFlashcardFields, reviewLogEntry };
 }

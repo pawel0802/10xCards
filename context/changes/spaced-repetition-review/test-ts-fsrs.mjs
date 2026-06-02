@@ -1,3 +1,4 @@
+/* global process, console */
 import { fsrs, Rating } from "ts-fsrs";
 
 // Minimal FSRS parameters (example values). These are not tuned.
@@ -13,7 +14,7 @@ const GLOBAL_FSRS_PARAMS = {
   relearning_steps: [],
 };
 
-async function main() {
+function main() {
   try {
     const scheduler = fsrs(GLOBAL_FSRS_PARAMS);
 

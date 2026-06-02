@@ -11,7 +11,7 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
     const parsed = FlashcardInputSchema.safeParse(body);
     if (!parsed.success) {
       return new Response(JSON.stringify({ error: "Invalid input." }), {
@@ -21,19 +21,22 @@ export const POST: APIRoute = async ({ request }) => {
     }
     // Call AI service to generate flashcards
     try {
-      const flashcards = await import("@/lib/services/ai").then((m) => m.generateFlashcardsFromText(parsed.data.text));
+      const { generateFlashcardsFromText } = await import("@/lib/services/ai");
+      const flashcards = await generateFlashcardsFromText(parsed.data.text);
       return new Response(JSON.stringify({ flashcards }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
-    } catch (err) {
-      return new Response(JSON.stringify({ error: (err as Error).message }), {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return new Response(JSON.stringify({ error: msg }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
     }
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Invalid request or server error." }), {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Invalid request or server error.";
+    return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

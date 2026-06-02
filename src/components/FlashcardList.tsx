@@ -28,65 +28,88 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
   const [showMassDeleteModal, setShowMassDeleteModal] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`/api/flashcards?page=${page}`)
-      .then((res) => res.json())
-      .then((res: ApiResponse) => {
-        if (res.error) setError(res.error);
-        else {
-          setFlashcards(res.data);
-          setCount(res.count);
+    let mounted = true;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/flashcards?page=${page}`);
+        const data = (await res.json()) as ApiResponse;
+        if (!mounted) return;
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setFlashcards(data.data);
+          setCount(data.count);
           setError(null);
         }
-      })
-      .catch((e) => {
-        setError(e.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      } catch (err: unknown) {
+        if (!mounted) return;
+        if (err instanceof Error) setError(err.message);
+        else setError(String(err));
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      mounted = false;
+    };
   }, [page]);
 
   if (loading) return <div className={cn("p-4", className)}>Loading...</div>;
   if (error) return <div className={cn("p-4 text-red-500", className)}>{error}</div>;
 
   // --- Handlers ---
-  function handleDelete(id: string) {
-    fetch(`/api/flashcards`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: [id] }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.error) setToast({ message: res.error, type: "error" });
-        else {
-          setFlashcards((cards) => cards.filter((c) => c.id !== id));
-          setToast({ message: "Flashcard deleted!", type: "success" });
-        }
+  async function handleDelete(id: string) {
+    try {
+      const res = await fetch(`/api/flashcards`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [id] }),
       });
+      const data = (await res.json()) as { error?: string };
+      if (data.error) {
+        setToast({ message: data.error, type: "error" });
+      } else {
+        setFlashcards((cards) => cards.filter((c) => c.id !== id));
+        setToast({ message: "Flashcard deleted!", type: "success" });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setToast({ message: `Failed to delete flashcard: ${msg}`, type: "error" });
+    }
   }
   function handleMassDelete() {
     if (selected.length === 0) return;
     setShowMassDeleteModal(true);
   }
 
-  function confirmMassDelete() {
-    fetch(`/api/flashcards`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: selected }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.error) setToast({ message: res.error, type: "error" });
-        else {
-          setFlashcards((cards) => cards.filter((c) => !selected.includes(c.id)));
-          setToast({ message: "Flashcards deleted!", type: "success" });
-          setSelected([]);
-        }
+  async function confirmMassDelete() {
+    if (selected.length === 0) {
+      setShowMassDeleteModal(false);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/flashcards`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selected }),
       });
-    setShowMassDeleteModal(false);
+      const data = (await res.json()) as { error?: string };
+      if (data.error) {
+        setToast({ message: data.error, type: "error" });
+      } else {
+        setFlashcards((cards) => cards.filter((c) => !selected.includes(c.id)));
+        setToast({ message: "Flashcards deleted!", type: "success" });
+        setSelected([]);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setToast({ message: `Failed to delete flashcards: ${msg}`, type: "error" });
+    } finally {
+      setShowMassDeleteModal(false);
+    }
   }
 
   if (flashcards.length === 0) {
@@ -102,7 +125,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
           />
         )}
         <div className={cn("flex flex-col items-center gap-4 p-8", className)}>
-          <div className="text-lg">You don't have any flashcards yet</div>
+          <div className="text-lg">You do not have any flashcards yet</div>
           <div className="flex gap-2">
             <Button
               asChild
@@ -184,7 +207,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
                       className="ml-2 inline-flex items-center gap-1 bg-red-600 hover:bg-red-700"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(card.id);
+                        void handleDelete(card.id);
                       }}
                     >
                       <Trash2 className="size-3" />
@@ -255,7 +278,9 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
               </button>
               <button
                 className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                onClick={confirmMassDelete}
+                onClick={() => {
+                  void confirmMassDelete();
+                }}
                 type="button"
               >
                 Delete
