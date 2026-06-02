@@ -125,7 +125,7 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
           />
         )}
         <div className={cn("flex flex-col items-center gap-4 p-8", className)}>
-          <div className="text-lg">You do not have any flashcards yet</div>
+          <div className="text-lg">You don&apos;t have any flashcards yet</div>
           <div className="flex gap-2">
             <Button
               asChild

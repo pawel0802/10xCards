@@ -34,9 +34,9 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Invalid request or server error.";
-    return new Response(JSON.stringify({ error: msg }), {
+  } catch (_err: unknown) {
+    // Return a generic message for invalid request bodies to avoid leaking raw error text
+    return new Response(JSON.stringify({ error: "Invalid request or server error." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
