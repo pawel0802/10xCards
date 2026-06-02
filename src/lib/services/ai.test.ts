@@ -7,13 +7,15 @@ beforeEach(() => {
 });
 
 const mockFetch = (content: string, ok = true) =>
-  vi.spyOn(global, "fetch").mockImplementation(() => Promise.resolve({
-    ok,
-    status: ok ? 200 : 500,
-    statusText: ok ? "OK" : "Internal Error",
-    json: async () => ({ choices: [{ message: { content } }] }),
-    text: async () => content,
-  } as Response));
+  vi.spyOn(global, "fetch").mockImplementation(() =>
+    Promise.resolve({
+      ok,
+      status: ok ? 200 : 500,
+      statusText: ok ? "OK" : "Internal Error",
+      json: async () => ({ choices: [{ message: { content } }] }),
+      text: async () => content,
+    } as Response),
+  );
 
 describe("generateFlashcardsFromText", () => {
   it("parses valid JSON flashcard array from AI response", async () => {

@@ -15,7 +15,7 @@ export interface FlashcardCandidate {
 
 export async function generateFlashcardsFromText(text: string): Promise<FlashcardCandidate[]> {
   // Ensure API key is never logged or committed
-const apiKey = getEnvVar("OPENROUTER_API_KEY");
+  const apiKey = getEnvVar("OPENROUTER_API_KEY");
   const model = getEnvVar("OPENROUTER_MODEL") ?? "gpt-4.1";
 
   if (!apiKey) {
@@ -58,7 +58,7 @@ const apiKey = getEnvVar("OPENROUTER_API_KEY");
     }
     if (attempt < 3) await new Promise((res) => setTimeout(res, 500 * attempt));
   }
-  if (!response || !response.ok) {
+  if (!response?.ok) {
     throw lastError || new Error("OpenRouter API call failed");
   }
 

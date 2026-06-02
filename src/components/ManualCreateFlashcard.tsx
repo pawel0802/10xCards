@@ -78,10 +78,17 @@ export default function ManualCreateFlashcard({ onSuccess }: Props) {
       {(success || error) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900/95 p-6 text-center shadow-2xl">
-            <div className={cn("mx-auto mb-4 flex size-14 items-center justify-center rounded-full", success ? "bg-purple-500/20" : "bg-red-500/20")}>
-              {success
-                ? <CheckCircle2 className="size-8 text-purple-400" />
-                : <AlertCircle className="size-8 text-red-400" />}
+            <div
+              className={cn(
+                "mx-auto mb-4 flex size-14 items-center justify-center rounded-full",
+                success ? "bg-purple-500/20" : "bg-red-500/20",
+              )}
+            >
+              {success ? (
+                <CheckCircle2 className="size-8 text-purple-400" />
+              ) : (
+                <AlertCircle className="size-8 text-red-400" />
+              )}
             </div>
             <h3 className="mb-1 text-xl font-bold text-white">{success ? "Card created!" : "Failed to create card"}</h3>
             {error && <div className="mb-4 text-sm text-red-400">{error}</div>}

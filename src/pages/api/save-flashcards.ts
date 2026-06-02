@@ -31,9 +31,9 @@ export const POST: APIRoute = async (context) => {
     return new Response(
       JSON.stringify({
         error: "Invalid input.",
-        details: parsed.error.flatten(),
+        details: z.treeifyError(parsed.error),
       }),
-      { status: 400 }
+      { status: 400 },
     );
   }
   const { cards } = parsed.data;

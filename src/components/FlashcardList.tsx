@@ -246,7 +246,9 @@ export const FlashcardList: React.FC<FlashcardListProps> = ({ className }) => {
             <div className="flex justify-center gap-3">
               <button
                 className="inline-flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
-                onClick={() => { setShowMassDeleteModal(false); }}
+                onClick={() => {
+                  setShowMassDeleteModal(false);
+                }}
                 type="button"
               >
                 Cancel

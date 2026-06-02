@@ -1,8 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { getFlashcards, updateFlashcard, deleteFlashcards } from "@/lib/services/flashcards";
-import type { AstroCookies } from "astro";
-import type {FlashcardUpdateDto} from "@/types";
 
 const QuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -30,15 +28,17 @@ export const GET: APIRoute = async (context) => {
   const params = Object.fromEntries(url.searchParams.entries());
   const parsed = QuerySchema.safeParse(params);
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: "Invalid query", details: parsed.error.flatten() }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid query", details: z.treeifyError(parsed.error) }), {
+      status: 400,
+    });
   }
   const { page, pageSize } = parsed.data;
-  const { data, count, error } = await getFlashcards(user.id, page, pageSize, context.request.headers, context.cookies as AstroCookies);
+  const { data, count, error } = await getFlashcards(user.id, page, pageSize, context.request.headers, context.cookies);
   if (error) {
-  console.error("API error:", error);
-  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
-    }
-    return new Response(JSON.stringify({ data, count }), { status: 200 });
+    console.error("API error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+  }
+  return new Response(JSON.stringify({ data, count }), { status: 200 });
 };
 
 export const PATCH: APIRoute = async (context) => {
@@ -47,15 +47,17 @@ export const PATCH: APIRoute = async (context) => {
   const body = await context.request.json();
   const parsed = PatchSchema.safeParse(body);
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid input", details: z.treeifyError(parsed.error) }), {
+      status: 400,
+    });
   }
   const { id, update } = parsed.data;
-  const { data, error } = await updateFlashcard(user.id, id, update as FlashcardUpdateDto, context.request.headers, context.cookies as AstroCookies);
+  const { data, error } = await updateFlashcard(user.id, id, update, context.request.headers, context.cookies);
   if (error) {
-  console.error("API error:", error);
-  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
-    }
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    console.error("API error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+  }
+  return new Response(JSON.stringify({ data }), { status: 200 });
 };
 
 export const DELETE: APIRoute = async (context) => {
@@ -64,13 +66,15 @@ export const DELETE: APIRoute = async (context) => {
   const body = await context.request.json();
   const parsed = DeleteSchema.safeParse(body);
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Invalid input", details: z.treeifyError(parsed.error) }), {
+      status: 400,
+    });
   }
   const { ids } = parsed.data;
-  const { count, error } = await deleteFlashcards(user.id, ids, context.request.headers, context.cookies as AstroCookies);
+  const { count, error } = await deleteFlashcards(user.id, ids, context.request.headers, context.cookies);
   if (error) {
-  console.error("API error:", error);
-  return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
-    }
-    return new Response(JSON.stringify({ count }), { status: 200 });
+    console.error("API error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+  }
+  return new Response(JSON.stringify({ count }), { status: 200 });
 };

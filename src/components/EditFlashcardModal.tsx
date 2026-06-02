@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Flashcard } from "@/types";
-import { Button } from "@/components/ui/button";
 import { Pencil, X } from "lucide-react";
 
 interface EditFlashcardModalProps {
@@ -46,7 +45,7 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
     <div className={cn("fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm")}>
       <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-gray-900/95 p-6 shadow-2xl">
         <button
-          className="absolute right-4 top-4 text-white/40 hover:text-white/80 transition-colors"
+          className="absolute top-4 right-4 text-white/40 transition-colors hover:text-white/80"
           onClick={onClose}
           type="button"
           aria-label="Close"
@@ -60,21 +59,29 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
           <h2 className="text-xl font-bold text-white">Edit Flashcard</h2>
         </div>
         <div className="mb-4">
-          <label htmlFor="edit-front" className="mb-1 block text-sm font-medium text-white/70">Front</label>
+          <label htmlFor="edit-front" className="mb-1 block text-sm font-medium text-white/70">
+            Front
+          </label>
           <input
             id="edit-front"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
             value={front}
-            onChange={e => setFront(e.target.value)}
+            onChange={(e) => {
+              setFront(e.target.value);
+            }}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="edit-back" className="mb-1 block text-sm font-medium text-white/70">Back</label>
+          <label htmlFor="edit-back" className="mb-1 block text-sm font-medium text-white/70">
+            Back
+          </label>
           <input
             id="edit-back"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none"
             value={back}
-            onChange={e => setBack(e.target.value)}
+            onChange={(e) => {
+              setBack(e.target.value);
+            }}
           />
         </div>
         {error && <div className="mb-4 text-sm text-red-400">{error}</div>}
@@ -89,7 +96,7 @@ export const EditFlashcardModal: React.FC<EditFlashcardModalProps> = ({ open, on
           </button>
           <button
             onClick={handleSave}
-            disabled={saving || (!front.trim() || !back.trim())}
+            disabled={saving || !front.trim() || !back.trim()}
             type="button"
             className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 disabled:opacity-50"
           >

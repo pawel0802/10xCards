@@ -1,14 +1,17 @@
-import { fsrs, Rating } from 'ts-fsrs';
-import type { Flashcard } from '@/types';
+import { fsrs, Rating } from "ts-fsrs";
+import type { Flashcard } from "@/types";
 
 // Global FSRS parameters (DEFAULTS for MVP). Tune later or move to env/user settings.
 const GLOBAL_FSRS_PARAMS = {
   request_retention: 0.9,
   maximum_interval: 365,
-  w: [0.4025, 0.8913, 3.0082, 16.7118, 5.234, 1.2505, 0.9412, 0.0543, 1.5434, 0.1557, 1.0118, 4.9082, 0.222, 0.4042, 1.4721, 0.2079, 2.7668, 0.4616, 0.2241],
+  w: [
+    0.4025, 0.8913, 3.0082, 16.7118, 5.234, 1.2505, 0.9412, 0.0543, 1.5434, 0.1557, 1.0118, 4.9082, 0.222, 0.4042,
+    1.4721, 0.2079, 2.7668, 0.4616, 0.2241,
+  ],
   enable_short_term: true,
   learning_steps: [],
-  relearning_steps: []
+  relearning_steps: [],
 };
 
 const scheduler = fsrs(GLOBAL_FSRS_PARAMS);
@@ -35,7 +38,8 @@ export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
   const S_MIN = 1e-3;
 
   const rawStability = cardRow.stability === undefined || cardRow.stability === null ? 0 : Number(cardRow.stability);
-  const rawDifficulty = cardRow.difficulty === undefined || cardRow.difficulty === null ? 0 : Number(cardRow.difficulty);
+  const rawDifficulty =
+    cardRow.difficulty === undefined || cardRow.difficulty === null ? 0 : Number(cardRow.difficulty);
   const rawReps = Number(cardRow.reps ?? 0);
   const rawLapses = Number(cardRow.lapses ?? 0);
   const rawState = Number(cardRow.state ?? 0);
@@ -73,7 +77,7 @@ export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
   } catch (e: any) {
     // If scheduler validation fails (e.g. invalid memory state), fall back to treating
     // the card as NEW so the algorithm can initialize sensible defaults.
-    console.error('scheduler.next validation error, falling back to NEW card:', e?.message ?? e, { cardInput });
+    console.error("scheduler.next validation error, falling back to NEW card:", e?.message ?? e, { cardInput });
     const fallbackInput = { ...cardInput, difficulty: 0, stability: 0, state: 0 };
     result = scheduler.next(fallbackInput, now, mapClientRating(ratingNumber));
   }
@@ -85,7 +89,12 @@ export async function applyRating(cardRow: Flashcard, ratingNumber: number) {
     reps: result.card.reps,
     lapses: result.card.lapses,
     due_date: result.card.due instanceof Date ? result.card.due.toISOString() : new Date(result.card.due).toISOString(),
-    last_review: result.card.last_review instanceof Date ? result.card.last_review.toISOString() : (result.card.last_review ? new Date(result.card.last_review).toISOString() : now.toISOString())
+    last_review:
+      result.card.last_review instanceof Date
+        ? result.card.last_review.toISOString()
+        : result.card.last_review
+          ? new Date(result.card.last_review).toISOString()
+          : now.toISOString(),
   } as any;
 
   const reviewLogEntry = {
