@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "handler": {
+          "type": "command",
+          "command": "npx eslint --fix $FILEPATH",
+          "timeout": 30000
+        }
+      }
+    ]
+  }
+}
