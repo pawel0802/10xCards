@@ -190,9 +190,9 @@ No migration is needed. This change is test coverage only.
 
 #### Automated
 
-- [ ] 2.1 Add `save-flashcards` auth, validation, and DB error coverage
-- [ ] 2.2 Re-run `npm test` and `npm run lint`
+- [x] 2.1 Add `save-flashcards` auth, validation, and DB error coverage
+- [x] 2.2 Re-run `npm test` and `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Refresh after saving and confirm the card appears in the list
+- [x] 2.3 Refresh after saving and confirm the card appears in the list
