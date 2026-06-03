@@ -178,13 +178,13 @@ No migration is needed. This change is test coverage only.
 
 #### Automated
 
-- [ ] 1.1 Add `GenerateFlashcards` localStorage handoff coverage
-- [ ] 1.2 Add `ReviewFlashcards` accept/edit/reject/save coverage
-- [ ] 1.3 Run `npm test` and `npm run lint`
+- [x] 1.1 Add `GenerateFlashcards` localStorage handoff coverage
+- [x] 1.2 Add `ReviewFlashcards` accept/edit/reject/save coverage
+- [x] 1.3 Run `npm test` and `npm run lint`
 
 #### Manual
 
-- [ ] 1.4 Run the browser generate → review → save smoke
+- [x] 1.4 Run the browser generate → review → save smoke
 
 ### Phase 2: Testing the save-flashcards handler
 
