@@ -27,3 +27,8 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 context/**/dist-test-bundle.js
+
+# playwright
+.playwright-cli/
+playwright/.auth/
+test-results/
