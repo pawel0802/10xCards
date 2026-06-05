@@ -1,15 +1,5 @@
 // seed.spec.ts
 import { test, expect } from '@playwright/test';
-import { defineConfig, devices } from '@playwright/test';
-
-export default defineConfig({
-    projects: [
-        {
-            name: 'Microsoft Edge',
-            use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        },
-    ],
-});
 
 test('created deck persists after page reload', async ({ page }) => {
     const deckName = `Test Deck ${Date.now()}`;
