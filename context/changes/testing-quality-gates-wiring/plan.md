@@ -139,7 +139,7 @@ Run the smoke job on PRs (optional initially), wire failure notifications, and p
 - [x] 1.2 Add post-edit hook and quick-check script
 
 #### Manual
-- [ ] 1.3 Verify CI job runs and produces logs
+- [x] 1.3 Verify CI job runs and produces logs
 
 ### Phase 2: Playwright infra & smoke
 
