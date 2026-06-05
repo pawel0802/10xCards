@@ -135,8 +135,8 @@ Run the smoke job on PRs (optional initially), wire failure notifications, and p
 ### Phase 1: CI & quick checks
 
 #### Automated
-- [ ] 1.1 Add CI job `e2e-smoke` (optional)
-- [ ] 1.2 Add post-edit hook and quick-check script
+- [x] 1.1 Add CI job `e2e-smoke` (optional)
+- [x] 1.2 Add post-edit hook and quick-check script
 
 #### Manual
 - [ ] 1.3 Verify CI job runs and produces logs
