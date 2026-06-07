@@ -144,12 +144,12 @@ Run the smoke job on PRs (optional initially), wire failure notifications, and p
 ### Phase 2: Playwright infra & smoke
 
 #### Automated
-- [ ] 2.1 Add `playwright.config.ts` and `tests/e2e/smoke.spec.ts`
-- [ ] 2.2 Add seed-fixtures script and CI seed step
-- [ ] 2.3 Add CI secrets and storageState script
+- [x] 2.1 Add `playwright.config.ts` and `tests/e2e/smoke.spec.ts`
+- [x] 2.2 Add seed-fixtures script and CI seed step
+- [x] 2.3 Add CI secrets and storageState script
 
 #### Manual
-- [ ] 2.4 Local run verification and deliberate-break check
+- [x] 2.4 Local run verification and deliberate-break check
 
 ### Phase 3: Gate wiring & rollout
 
