@@ -154,7 +154,7 @@ Run the smoke job on PRs (optional initially), wire failure notifications, and p
 ### Phase 3: Gate wiring & rollout
 
 #### Automated
-- [ ] 3.1 Run e2e-smoke on PRs (optional)
+- [x] 3.1 Run e2e-smoke on PRs (optional)
 - [ ] 3.2 Add failure notifications in PR checks
 
 #### Manual
