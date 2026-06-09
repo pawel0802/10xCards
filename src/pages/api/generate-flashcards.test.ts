@@ -47,7 +47,7 @@ const handler = async (body: GenerateFlashcardsBody, requestOverrides?: { json?:
     });
   }
 
-  return POST({ request });
+  return POST({ request } as any);
 };
 
 describe("POST /api/generate-flashcards", () => {
