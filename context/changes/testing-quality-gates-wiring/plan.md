@@ -155,8 +155,8 @@ Run the smoke job on PRs (optional initially), wire failure notifications, and p
 
 #### Automated
 - [x] 3.1 Run e2e-smoke on PRs (optional)
-- [ ] 3.2 Add failure notifications in PR checks
+- [x] 3.2 Add failure notifications in PR checks
 
 #### Manual
-- [ ] 3.3 Review failing run and confirm actionable logs
+- [x] 3.3 Review failing run and confirm actionable logs
 

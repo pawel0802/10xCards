@@ -1,13 +1,15 @@
 ﻿---
 change_id: testing-quality-gates-wiring
 title: Quality gates wiring and narrow e2e smoke
-status: implementing
+status: implemented
 created: 2026-06-05
-updated: 2026-06-07
+updated: 2026-06-09
 archived_at: null
 ---
 
 ## Notes
 
-Open a change to wire CI quality gates and add a narrow e2e smoke for the critical happy path.
+Open a change to wire CI quality gates and add a narrow Playwright e2e smoke for the critical happy path.
+
+- Phase 3 (Gate wiring & rollout) completed on 2026-06-09; manual verification performed.
 
