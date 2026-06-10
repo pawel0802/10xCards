@@ -28,8 +28,19 @@ export async function getFlashcards(
     .order("created_at", { ascending: false })
     .range(from, to)) as { data: Flashcard[] | null; count: number | null; error?: { message?: string } | null };
   const { data, count, error } = res;
-  if (error) logSupabaseError("getFlashcards", error);
-  return { data: data ?? [], count: count ?? 0, error: error?.message };
+  if (error) {
+    // PostgREST returns PGRST103 when the requested range is outside available rows.
+    // Treat that case as an empty page rather than an internal server error so clients can request higher pages safely.
+    const errAny = error as any;
+    const code = errAny?.code ?? errAny?.name ?? "";
+    const msg = errAny?.message ?? "";
+    if (code === "PGRST103" || (typeof msg === "string" && msg.includes("Requested range not satisfiable"))) {
+      return { data: [], count: 0 };
+    }
+    logSupabaseError("getFlashcards", error);
+    return { data: data ?? [], count: count ?? 0, error: error?.message };
+  }
+  return { data: data ?? [], count: count ?? 0 };
 }
 
 export async function updateFlashcard(

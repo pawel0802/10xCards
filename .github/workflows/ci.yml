@@ -104,3 +104,5 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+          INTEGRATION_TEST_PASS: ${{ secrets.INTEGRATION_TEST_PASS }}
