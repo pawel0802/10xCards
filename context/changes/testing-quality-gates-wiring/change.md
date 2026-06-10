@@ -3,7 +3,7 @@ change_id: testing-quality-gates-wiring
 title: Quality gates wiring and narrow e2e smoke
 status: implemented
 created: 2026-06-05
-updated: 2026-06-09
+updated: 2026-06-10
 archived_at: null
 ---
 

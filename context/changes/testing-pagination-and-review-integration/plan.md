@@ -167,10 +167,10 @@ Verify user isolation: one user cannot read/update another user's cards, and sen
 ### Phase 3: Ownership / RLS contract tests
 
 #### Automated
-- [ ] 3.1 Contract tests for ownership pass (read/write guards enforced)
+- [x] 3.1 Contract tests for ownership pass (read/write guards enforced)
 
 #### Manual
-- [ ] 3.2 Spot-check in UI that users cannot access others' cards
+- [x] 3.2 Spot-check in UI that users cannot access others' cards
 
 
 
