@@ -90,10 +90,10 @@ Locate the review-session entrypoint (API/service) that returns due cards and ad
 
 #### Automated Verification:
 - [x] 2.1 discovery documented and research.md updated with file:line anchors
-- [ ] 2.2 integration/contract tests exercising due-card listing and review result persistence pass
+- [x] 2.2 integration/contract tests exercising due-card listing and review result persistence pass
 
 #### Manual Verification:
-- [ ] 2.3 Manual review session run through UI to verify order and scheduling persistence
+- [x] 2.3 Manual review session run through UI to verify order and scheduling persistence
 
 ## Phase 3: Ownership / RLS contract tests (optional)
 
@@ -162,7 +162,7 @@ Verify user isolation: one user cannot read/update another user's cards, and sen
 - [x] 2.2 integration/contract tests exercising due-card listing and review result persistence pass
 
 #### Manual
-- [ ] 2.3 Manual review session run through UI to verify order and scheduling persistence
+- [x] 2.3 Manual review session run through UI to verify order and scheduling persistence
 
 ### Phase 3: Ownership / RLS contract tests
 
