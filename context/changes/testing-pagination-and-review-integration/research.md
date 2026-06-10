@@ -98,11 +98,18 @@ This supports the plan's hot-spot evidence pointing at `src/components` and `src
 
 ## Next steps
 
-- Run `/10x-plan testing-pagination-and-review-integration` to draft a plan with sub-phases (cheap integration test first, then review grounding), or run targeted search for scheduling functions and re-run `/10x-research` to answer Open Question #1.
+- Discovery update: located review endpoints and service implementations relevant to Phase 2:
+  - `src/pages/api/learning/due.ts` — GET `/api/learning/due` calls `getDueFlashcards` in `src/lib/services/review.ts`.
+  - `src/pages/api/learning/review.ts` — POST `/api/learning/review` accepts `{ flashcardId, rating, idempotencyKey }` and calls `submitReview` in `src/lib/services/review.ts`.
+  - `src/lib/services/review.ts` — implements `getDueFlashcards` and `submitReview` (which uses `applyRating` in `src/lib/scheduler.ts` and persists via RPC `record_review`).
+
+- Added test plan: create `tests/integration/review-scheduling.test.ts` to verify due-listing and review-result persistence (seed due rows, call GET, call POST, assert DB changes and review_logs created).
+
+- Recommended next action: add the integration test (done), then run the integration test suite in an environment configured with SUPABASE_URL, SUPABASE_KEY, INTEGRATION_TEST_USER, INTEGRATION_TEST_PASS. The existing test harness uses `vitest` and guards tests with `test.runIf(isConfigured)` so CI will skip when not configured.
 
 ---
 
 Research artifacts written:
 - `context/changes/testing-pagination-and-review-integration/research.md` (this file)
 
-If more depth is wanted (detailed code walk for scheduling, or permalinks inserted), say so and specify the focus (e.g., "find scheduling implementation") and the depth (quick vs deep).
+If more depth is wanted (detailed code walk for scheduler RPC, or permalinks inserted), say so and specify the focus (e.g., "find scheduling implementation") and the depth (quick vs deep).

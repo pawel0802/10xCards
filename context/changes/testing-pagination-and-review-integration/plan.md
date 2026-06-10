@@ -89,7 +89,7 @@ Locate the review-session entrypoint (API/service) that returns due cards and ad
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] 2.1 discovery documented and research.md updated with file:line anchors
+- [x] 2.1 discovery documented and research.md updated with file:line anchors
 - [ ] 2.2 integration/contract tests exercising due-card listing and review result persistence pass
 
 #### Manual Verification:
@@ -148,17 +148,17 @@ Verify user isolation: one user cannot read/update another user's cards, and sen
 ### Phase 1: Integration boundary test
 
 #### Automated
-- [ ] 1.1 Integration test `pagination-boundary.test.ts` exists and passes in CI
-- [ ] 1.2 Migrations/seeding step runs successfully in test harness
-- [ ] 1.3 Vitest suite including integration tests completes without flakiness in local run
+- [x] 1.1 Integration test `pagination-boundary.test.ts` exists and passes in CI
+- [x] 1.2 Migrations/seeding step runs successfully in test harness
+- [x] 1.3 Vitest suite including integration tests completes without flakiness in local run
 
 #### Manual
-- [ ] 1.4 Manually reproduce the sequence via Postman or local UI and verify list stability
+- [x] 1.4 Manually reproduce the sequence via Postman or local UI and verify list stability
 
 ### Phase 2: Ground review-session scheduling
 
 #### Automated
-- [ ] 2.1 discovery documented and research.md updated with file:line anchors
+- [x] 2.1 discovery documented and research.md updated with file:line anchors
 - [ ] 2.2 integration/contract tests exercising due-card listing and review result persistence pass
 
 #### Manual
