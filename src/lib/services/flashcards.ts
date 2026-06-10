@@ -8,6 +8,13 @@ function logSupabaseError(context: string, error: unknown) {
   console.error(`[Supabase] ${context}:`, error);
 }
 
+type SupaError = { message?: string; code?: string; name?: string } | null;
+interface RangeResponse<T> {
+  data: T | null;
+  count: number | null;
+  error?: SupaError;
+}
+
 export async function getFlashcards(
   userId: string,
   page = 1,
@@ -19,28 +26,42 @@ export async function getFlashcards(
   if (!supabase) {
     return { data: [], count: 0, error: "Supabase client not initialized" };
   }
+
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
+
   const res = (await supabase
     .from("flashcards")
     .select("*", { count: "exact" })
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .range(from, to)) as { data: Flashcard[] | null; count: number | null; error?: { message?: string } | null };
-  const { data, count, error } = res;
-  if (error) {
-    // PostgREST returns PGRST103 when the requested range is outside available rows.
-    // Treat that case as an empty page rather than an internal server error so clients can request higher pages safely.
-    const errAny = error as any;
-    const code = errAny?.code ?? errAny?.name ?? "";
-    const msg = errAny?.message ?? "";
+    .range(from, to)) as RangeResponse<Flashcard[]>;
+
+  if (res.error) {
+    const err = res.error;
+    const code = err.code ?? err.name ?? "";
+    const msg = err.message ?? "";
+
     if (code === "PGRST103" || (typeof msg === "string" && msg.includes("Requested range not satisfiable"))) {
-      return { data: [], count: 0 };
+      // Determine an accurate count and return empty data for out-of-range page
+      const countRes = (await supabase
+        .from("flashcards")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)) as { count: number | null; error?: SupaError };
+
+      if (countRes.error) {
+        logSupabaseError("getFlashcards.count", countRes.error);
+        return { data: [], count: 0, error: err.message };
+      }
+
+      return { data: [], count: countRes.count ?? 0 };
     }
-    logSupabaseError("getFlashcards", error);
-    return { data: data ?? [], count: count ?? 0, error: error?.message };
+
+    logSupabaseError("getFlashcards", res.error);
+    return { data: res.data ?? [], count: res.count ?? 0, error: err.message };
   }
-  return { data: data ?? [], count: count ?? 0 };
+
+  return { data: res.data ?? [], count: res.count ?? 0 };
 }
 
 export async function updateFlashcard(
