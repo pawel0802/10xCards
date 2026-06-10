@@ -125,9 +125,8 @@ export function applyRating(cardRow: Partial<Flashcard>, ratingNumber: number) {
   try {
     result = scheduler.next(cardInput, now, mapClientRating(ratingNumber));
   } catch (e: unknown) {
-    // If scheduler validation fails (e.g. invalid memory state), fall back to treating
-    // the card as NEW so the algorithm can initialize sensible defaults.
-
+    // Log the scheduler error for observability and rethrow so callers can decide
+    // how to handle the failure instead of silently masking it.
     let errMsg: string;
     if (typeof e === "object" && e !== null && "message" in e) {
       const em = (e as { message?: unknown }).message;
@@ -136,9 +135,8 @@ export function applyRating(cardRow: Partial<Flashcard>, ratingNumber: number) {
       errMsg = String(e);
     }
 
-    console.error("scheduler.next validation error, falling back to NEW card:", errMsg, { cardInput });
-    const fallbackInput: CardInput = { ...cardInput, difficulty: 0, stability: 0, state: 0 };
-    result = scheduler.next(fallbackInput, now, mapClientRating(ratingNumber));
+    console.error("scheduler.next error:", errMsg, { cardInput });
+    throw new Error(`Scheduler computation failed: ${errMsg}`);
   }
 
   const dueIso =

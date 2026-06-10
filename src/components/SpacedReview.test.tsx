@@ -44,4 +44,44 @@ describe("SpacedReview", () => {
     fireEvent.click(screen.getByText("Retry"));
     await waitFor(() => expect(screen.getByText("Review Complete!")).toBeInTheDocument());
   });
+
+  it("shows scheduler-friendly message and reports to clipboard", async () => {
+    // First submit fails with scheduler-specific error, then retry succeeds
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: () => Promise.resolve({ error: "Scheduler computation failed: invalid memory" }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    // Stub navigator.clipboard
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { clipboard: { writeText } });
+
+    render(<SpacedReview initialCards={[{ id: "c3", front: "Q3", back: "A3" }]} />);
+    fireEvent.click(screen.getByText("Show answer"));
+    fireEvent.click(screen.getByText("Again"));
+
+    await waitFor(() => expect(screen.getByText(/Internal scheduling error prevented/)).toBeInTheDocument());
+
+    // Report button should exist
+    const reportBtn = screen.getByText("Report");
+    expect(reportBtn).toBeInTheDocument();
+
+    // Click report -> should copy payload
+    fireEvent.click(reportBtn);
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalled();
+    });
+
+    // Copied confirmation shown
+    await waitFor(() => expect(screen.getByText(/Copied details to clipboard/)).toBeInTheDocument());
+
+    // Retry should succeed and finish review
+    fireEvent.click(screen.getByText("Retry"));
+    await waitFor(() => expect(screen.getByText("Review Complete!")).toBeInTheDocument());
+  });
 });
