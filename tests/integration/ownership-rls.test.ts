@@ -3,6 +3,7 @@ import { createClient as createAnonClient } from "@supabase/supabase-js";
 import { GET } from "@/pages/api/flashcards";
 import { POST as POST_REVIEW } from "@/pages/api/learning/review";
 import * as supabaseModule from "@/lib/supabase";
+import { randomUUID } from "crypto";
 
 interface Flashcard {
   id: string;
@@ -21,7 +22,7 @@ const TEST_PASS = process.env.INTEGRATION_TEST_PASS;
 const isConfigured = !!(SUPABASE_URL && SUPABASE_KEY && TEST_EMAIL && TEST_PASS);
 
 function randomId() {
-  return "r-" + Math.random().toString(36).slice(2, 10);
+  return randomUUID();
 }
 
 // Skip when integration env not configured
