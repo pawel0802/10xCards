@@ -63,10 +63,10 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Critical-path coverage | Prove generation and persistence on the cheapest path | #1, #4 | unit + integration | implementing | context/changes/testing-critical-path-coverage/ |
-| 2 | Pagination and review integration | Prove card list paging and review-session progression stay correct under churn | #2, #3 | integration | not started | — |
+| 1 | Critical-path coverage | Prove generation and persistence on the cheapest path | #1, #4 | unit + integration | complete | context/changes/testing-critical-path-coverage/ |
+| 2 | Pagination and review integration | Prove card list paging and review-session progression stay correct under churn | #2, #3 | integration | researched | context/changes/testing-pagination-and-review-integration/ |
 | 3 | Security and ownership coverage | Prove user isolation and persistence boundaries stay intact | #5 | integration + contract | not started | — |
-| 4 | Quality-gates wiring | Lock the floor in CI and add a narrow end-to-end smoke for the happy path | cross-cutting | gates + e2e smoke | change opened | context/changes/testing-quality-gates-wiring/ |
+| 4 | Quality-gates wiring | Lock the floor in CI and add a narrow end-to-end smoke for the happy path | cross-cutting | gates + e2e smoke | complete | context/changes/testing-quality-gates-wiring/ |
 
 | Value | Meaning |
 |-------|---------|

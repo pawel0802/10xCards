@@ -66,10 +66,44 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run E2E smoke
+      - name: Run E2E tests
         run: bash ./scripts/ci/run-e2e-smoke.sh
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           E2E_TEST_USER: ${{ secrets.E2E_TEST_USER }}
           E2E_TEST_PASS: ${{ secrets.E2E_TEST_PASS }}
+
+  integration-tests:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      - name: Seed test fixtures (optional)
+        run: bash scripts/ci/seed-fixtures.sh
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      - name: Run integration tests
+        run: npx vitest run tests/integration/*.test.ts --reporter verbose
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          INTEGRATION_TEST_USER: ${{ secrets.INTEGRATION_TEST_USER }}
+          INTEGRATION_TEST_PASS: ${{ secrets.INTEGRATION_TEST_PASS }}
+          INTEGRATION_DEBUG: 'false'

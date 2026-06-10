@@ -1,9 +1,9 @@
 ---
 change_id: testing-critical-path-coverage
 title: Critical-path coverage for generation and persistence
-status: implementing
+status: implemented
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-10
 archived_at: null
 ---
 
