@@ -215,17 +215,3 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 - **Observability (logging, error tracking, metryki)** — Why parked: brak NFR w PRD + cel `speed`; domyślna obsługa błędów platformy Cloudflare wystarczy na MVP.
 
 
-- **S-01: użytkownik może wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna; zaakceptowane fiszki trafiają natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-25-ai-generation-and-review/`. Lesson: —.
-
-All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
-
-- **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
-
-- **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.** — Archived 2026-06-11 → context/archive/2026-05-31-ui-ux-improvements/. Lesson: —.
-All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
-
-- **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
-
-- **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.
-
-
