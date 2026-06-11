@@ -1,4 +1,4 @@
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       flashcards: {
@@ -26,4 +26,4 @@ export type Database = {
       };
     };
   };
-};
+}

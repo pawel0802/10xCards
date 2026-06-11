@@ -21,6 +21,7 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
   const [submitting, setSubmitting] = useState(false);
   const [showBack, setShowBack] = useState(false);
   const [lastRatingAttempt, setLastRatingAttempt] = useState<number | null>(null);
+  const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
   const loadCards = useCallback(async () => {
     setLoading(true);
@@ -217,9 +218,20 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
 
       {error && cards.length > 0 && (
         <div className="mb-2 text-red-500">
-          <div>{error}</div>
-          {lastRatingAttempt !== null && (
-            <div className="mt-2">
+          <div>
+            {/* Friendly message for scheduler failures */}
+            {error.includes("Scheduler computation failed") ? (
+              <>
+                <div>Internal scheduling error prevented saving your answer. Your rating was not recorded.</div>
+                <div className="text-sm text-red-300">Please retry or report the problem if it persists.</div>
+              </>
+            ) : (
+              <div>{error}</div>
+            )}
+          </div>
+
+          <div className="mt-2 flex items-center gap-2">
+            {lastRatingAttempt !== null && (
               <button
                 onClick={() => {
                   setError(null);
@@ -230,8 +242,59 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
                 <RotateCcw className="size-4" />
                 Retry
               </button>
-            </div>
-          )}
+            )}
+
+            <button
+              onClick={async () => {
+                try {
+                  const cardId = cards[currentIdx] ? cards[currentIdx].id : "unknown";
+                  const ratingAttempt = lastRatingAttempt ?? "n/a";
+                  const payload = `Error: ${error}\nCardId: ${cardId}\nRatingAttempt: ${ratingAttempt}`;
+                  interface ClipboardLike {
+                    clipboard?: {
+                      writeText?: (s: string) => Promise<void>;
+                    };
+                  }
+                  const nav = globalThis as unknown as ClipboardLike;
+                  // Prefer calling the standard navigator.clipboard.writeText if available (matches test stubbing).
+                  const globalNav = (
+                    globalThis as unknown as {
+                      navigator?: { clipboard?: { writeText?: (s: string) => Promise<void> } };
+                    }
+                  ).navigator;
+                  if (globalNav?.clipboard?.writeText) {
+                    await globalNav.clipboard.writeText(payload);
+                    setCopySuccess("Copied details to clipboard");
+                    setTimeout(() => {
+                      setCopySuccess(null);
+                    }, 3000);
+                  } else if (nav.clipboard?.writeText) {
+                    await nav.clipboard.writeText(payload);
+                    setCopySuccess("Copied details to clipboard");
+                    setTimeout(() => {
+                      setCopySuccess(null);
+                    }, 3000);
+                  } else {
+                    // Fallback: open mailto with prefilled body
+                    const subject = encodeURIComponent("Bug report: scheduler error");
+                    const body = encodeURIComponent(payload);
+                    window.location.href = `mailto:support@example.com?subject=${subject}&body=${body}`;
+                  }
+                } catch (e) {
+                  console.error("Failed to copy report payload", e);
+                  setCopySuccess("Failed to copy");
+                  setTimeout(() => {
+                    setCopySuccess(null);
+                  }, 3000);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded border border-white/10 bg-transparent px-3 py-1 text-white"
+            >
+              Report
+            </button>
+
+            {copySuccess && <div className="text-sm text-white/80">{copySuccess}</div>}
+          </div>
         </div>
       )}
 
