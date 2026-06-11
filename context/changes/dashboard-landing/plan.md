@@ -196,10 +196,10 @@ Suggested SVG icons (Lucide-style, 24×24, `stroke="currentColor"` `stroke-width
 
 #### Manual
 
-- [ ] 2.3 Dashboard shows Topbar with user email and sign-out
-- [ ] 2.4 Dashboard shows three feature cards with correct labels and links
-- [ ] 2.5 Clicking each card navigates to correct page
-- [ ] 2.6 Sign out from Topbar redirects to sign-in page
-- [ ] 2.7 Dashboard inaccessible when signed out
-- [ ] 2.8 Visual consistency verified (gradient heading, glass-morphism cards, cosmic background)
-- [ ] 2.9 No console errors on page load
+- [x] 2.3 Dashboard shows Topbar with user email and sign-out
+- [x] 2.4 Dashboard shows three feature cards with correct labels and links
+- [x] 2.5 Clicking each card navigates to correct page
+- [x] 2.6 Sign out from Topbar redirects to sign-in page
+- [x] 2.7 Dashboard inaccessible when signed out
+- [x] 2.8 Visual consistency verified (gradient heading, glass-morphism cards, cosmic background)
+- [x] 2.9 No console errors on page load
