@@ -1,10 +1,10 @@
 ---
 change_id: ai-generation-and-review
 title: AI flashcard generation and candidate review
-status: impl_reviewed
+status: archived
 created: 2026-05-25
-updated: 2026-05-26
-archived_at: null
+updated: 2026-06-11
+archived_at: 2026-06-11T09:47:14Z
 ---
 
 ## Notes
