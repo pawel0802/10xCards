@@ -341,7 +341,7 @@ S-06
 
 #### Manual
 
-- [ ] 3.8 All modals have dark blurred backdrop
-- [ ] 3.9 All modal panels are dark-glass style with icon badges
-- [ ] 3.10 Edit-flashcard inputs have dark style and purple focus ring
-- [ ] 3.11 No light-coloured modal panels remain in the app
+- [x] 3.8 All modals have dark blurred backdrop
+- [x] 3.9 All modal panels are dark-glass style with icon badges
+- [x] 3.10 Edit-flashcard inputs have dark style and purple focus ring
+- [x] 3.11 No light-coloured modal panels remain in the app
