@@ -148,7 +148,10 @@ test.runIf(isConfigured)(
       // eslint-disable-next-line no-console
       console.log('DEBUG: p3Data', p3Data.map((d) => ({ id: d.id, created_at: d.created_at })));
 
-      const ids = [...p2bData.map((d) => d.id), ...p3Data.map((d) => d.id)];
+      const allIds = [...p2bData.map((d) => d.id), ...p3Data.map((d) => d.id)];
+
+      // Only consider IDs we inserted in this test to avoid interference from pre-existing rows
+      const ids = allIds.filter((id) => insertedIds.includes(id));
       const unique = new Set(ids);
       expect(unique.size).toBe(ids.length);
 
