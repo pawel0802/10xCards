@@ -1,10 +1,10 @@
 ---
 change_id: flashcard-data-schema
 title: Define flashcard and review schema with RLS
-status: implemented
+status: archived
 created: 2026-05-25
 updated: 2026-06-11
-archived_at: null
+archived_at: 2026-06-11T10:02:14Z
 ---
 
 ## Notes
