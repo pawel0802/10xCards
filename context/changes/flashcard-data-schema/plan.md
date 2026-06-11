@@ -208,9 +208,9 @@ npx supabase db push
 
 #### Manual
 
-- [ ] 1.4 `npx supabase link` + `npx supabase db push` completes without error
-- [ ] 1.5 Both tables visible in Supabase Dashboard with expected columns and RLS enabled
-- [ ] 1.6 Unauthenticated `SELECT * FROM public.flashcards` returns 0 rows (RLS active)
+- [x] 1.4 `npx supabase link` + `npx supabase db push` completes without error
+- [x] 1.5 Both tables visible in Supabase Dashboard with expected columns and RLS enabled
+- [x] 1.6 Unauthenticated `SELECT * FROM public.flashcards` returns 0 rows (RLS active)
 
 ### Phase 2: TypeScript Types
 
@@ -222,4 +222,4 @@ npx supabase db push
 
 #### Manual
 
-- [ ] 2.4 Spot-check: exported types match migration schema (rating, source, SR fields)
+- [x] 2.4 Spot-check: exported types match migration schema (rating, source, SR fields)
