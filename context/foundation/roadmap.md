@@ -71,7 +71,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Błędna definicja schematu — np. brak kolumny dla harmonogramu SR lub złe typy danych — wymusi migrację w połowie projektu; warto uwzględnić wymagania S-04 (pola due_date, ease_factor, interval) zanim schemat zostanie zatwierdzony.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -87,7 +87,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Który dostawca AI i model użyć do generowania fiszek? — Owner: user. Block: no.
   - Jak zapewnić widoczny postęp podczas generowania (NFR: ≤ 10s z ciągłym feedbackiem)? — Owner: team. Block: no.
 - **Risk:** Jakość generowania AI to rdzeń produktu — zbyt niska acceptance rate (poniżej 75%) od razu podważa założenie, na którym zbudowany jest produkt; slice o najwyższym ryzyku produktowym w całym roadmapie.
-- **Status:** proposed
+- **Status:** done
 
 ### S-02: Manual card creation
 
@@ -111,7 +111,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Niskie ryzyko — standardowy widok CRUD; weryfikacja wymaga fiszek w bazie (dostarczonych przez S-01 lub S-02).
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Spaced repetition review
 
@@ -124,7 +124,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Która biblioteka SR zintegrować (np. ts-fsrs, srs-js, własna implementacja algorytmu SM-2)? — Owner: user. Block: no.
 - **Risk:** Gwiazda przewodnia — wszystkie poprzednie slajzy prowadzą tutaj; błędna biblioteka SR może wymagać refaktoru harmonogramowania kart, ale nie blokuje podstawowego przepływu MVP.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Dashboard landing page
 
@@ -137,7 +137,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Dokładny układ i CTA (kafelki vs. listy)? — Owner: user. Block: no.
 - **Risk:** Niskie ryzyko — podstawowa nawigacja; wpływ głównie na odkrywalność funkcji.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: UI/UX improvements
 
@@ -187,7 +187,7 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 - **Unknowns:**
   - Dokładna paleta kolorów i zestaw ikon? — Owner: user. Block: no.
 - **Risk:** Niskie ryzyko — kosmetyczne zmiany zwiększające odkrywalność i spójność UI.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -214,7 +214,8 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 - **Aplikacje mobilne** — Why parked: PRD §Non-Goals: "No mobile apps." Web only for MVP.
 - **Observability (logging, error tracking, metryki)** — Why parked: brak NFR w PRD + cel `speed`; domyślna obsługa błędów platformy Cloudflare wystarczy na MVP.
 
-## Done
+
+- **S-01: użytkownik może wkleić tekst i uzyskać kandydatki na fiszki od AI, a następnie zaakceptować, edytować lub odrzucić każdą z osobna; zaakceptowane fiszki trafiają natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-25-ai-generation-and-review/`. Lesson: —.
 
 All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
 
@@ -226,4 +227,5 @@ All roadmap slices are implemented. Use `/10x-archive` on completed change folde
 - **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
 
 - **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.
+
 
