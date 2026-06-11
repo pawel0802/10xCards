@@ -182,3 +182,5 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
 
 - **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
+
+- **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.
