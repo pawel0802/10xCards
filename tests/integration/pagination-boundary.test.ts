@@ -141,6 +141,13 @@ test.runIf(isConfigured)(
       const p2bData = Array.isArray(p2b) ? p2b : p2b.data;
       const p3Data = Array.isArray(p3) ? p3 : p3.data;
 
+      // Debug logging to diagnose pagination instability
+      // (captures ids and created_at so we can see overlaps and ordering)
+      // eslint-disable-next-line no-console
+      console.log('DEBUG: p2bData', p2bData.map((d) => ({ id: d.id, created_at: d.created_at })));
+      // eslint-disable-next-line no-console
+      console.log('DEBUG: p3Data', p3Data.map((d) => ({ id: d.id, created_at: d.created_at })));
+
       const ids = [...p2bData.map((d) => d.id), ...p3Data.map((d) => d.id)];
       const unique = new Set(ids);
       expect(unique.size).toBe(ids.length);
