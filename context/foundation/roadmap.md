@@ -3,7 +3,7 @@ project: "10xCards"
 version: 1
 status: complete
 created: 2026-05-25
-updated: 2026-06-02
+updated: 2026-06-11
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -99,7 +99,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Niskie ryzyko — standardowy formularz CRUD; pełni funkcję siatki bezpieczeństwa dla kart, których AI nie wygenerowało lub wygenerowało źle.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Card management
 
@@ -180,3 +180,5 @@ Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a f
 ## Done
 
 All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
+
+- **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
