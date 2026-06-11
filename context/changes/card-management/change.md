@@ -1,7 +1,7 @@
 # Card Management (CRUD) — change.md
 
-status: implementing
-updated: 2026-05-28
+status: implemented
+updated: 2026-06-11
 
 ---
 

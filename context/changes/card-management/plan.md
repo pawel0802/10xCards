@@ -216,16 +216,16 @@ Pokrycie testami, manualna weryfikacja edge-case’ów.
 #### Automated
 - [x] 3.1 Edycja/usuwanie działa (unit testy)
 #### Manual
-- [ ] 3.2 Modal działa, toasty się pojawiają, lista odświeża się automatycznie
+- [x] 3.2 Modal działa, toasty się pojawiają, lista odświeża się automatycznie
 
 ### Phase 4: Integracja z autoryzacją
 #### Automated
-- [ ] 4.1 Middleware działa (unit testy)
+- [x] 4.1 Middleware działa (unit testy)
 #### Manual
-- [ ] 4.2 Niezalogowany nie ma dostępu
+- [x] 4.2 Niezalogowany nie ma dostępu
 
 ### Phase 5: Testy i weryfikacja
 #### Automated
-- [ ] 5.1 Wszystkie testy przechodzą
+- [x] 5.1 Wszystkie testy przechodzą
 #### Manual
-- [ ] 5.2 Edge-case’y zweryfikowane ręcznie
+- [x] 5.2 Edge-case’y zweryfikowane ręcznie
