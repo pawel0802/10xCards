@@ -1,9 +1,9 @@
 ---
 change_id: manual-card-creation
 title: Manual flashcard creation form
-status: new
+status: implemented
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-11
 archived_at: null
 ---
 

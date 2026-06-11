@@ -106,16 +106,16 @@ Ensure API and DB support for manual cards, enforce 300-char limit and required 
 ## Progress
 ### Phase 1: UI & Routing
 #### Automated
-- [ ] 1.1 Linting passes
-- [ ] 1.2 Type checking passes
+- [x] 1.1 Linting passes
+- [x] 1.2 Type checking passes
 #### Manual
 - [x] 1.3 Button appears and routes correctly
 - [x] 1.4 Form renders, validates, disables submit until valid
 
 ### Phase 2: Backend & Validation
 #### Automated
-- [ ] 2.1 Linting passes
-- [ ] 2.2 Type checking passes
+- [x] 2.1 Linting passes
+- [x] 2.2 Type checking passes
 #### Manual
 - [x] 2.3 API rejects invalid/overlong input
 - [x] 2.4 Cards saved with correct source
