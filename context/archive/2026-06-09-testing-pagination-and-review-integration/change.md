@@ -1,10 +1,10 @@
 ---
 change_id: testing-pagination-and-review-integration
 title: Pagination and review integration
-status: implemented
+status: archived
 created: 2026-06-09
-updated: 2026-06-10
-archived_at: null
+updated: 2026-06-11
+archived_at: 2026-06-11T12:11:18Z
 ---
 
 ## Notes
