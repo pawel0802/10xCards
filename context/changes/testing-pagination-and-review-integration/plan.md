@@ -62,12 +62,12 @@ Create an integration test that seeds enough cards for multiple pages, performs 
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] 1.1 Integration test `pagination-boundary.test.ts` exists and passes in CI
-- [ ] 1.2 Migrations/seeding step runs successfully in test harness
-- [ ] 1.3 Vitest suite including integration tests completes without flakiness in local run
+- [x] 1.1 Integration test `pagination-boundary.test.ts` exists and passes in CI
+- [x] 1.2 Migrations/seeding step runs successfully in test harness
+- [x] 1.3 Vitest suite including integration tests completes without flakiness in local run
 
 #### Manual Verification:
-- [ ] 1.4 Manually reproduce the sequence via Postman or local UI and verify list stability
+- [x] 1.4 Manually reproduce the sequence via Postman or local UI and verify list stability
 
 ## Phase 2: Ground review-session scheduling
 
@@ -107,10 +107,10 @@ Verify user isolation: one user cannot read/update another user's cards, and sen
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] 3.1 Contract tests for ownership pass (read/write guards enforced)
+- [x] 3.1 Contract tests for ownership pass (read/write guards enforced)
 
 #### Manual Verification:
-- [ ] 3.2 Spot-check in UI that users cannot access others' cards
+- [x] 3.2 Spot-check in UI that users cannot access others' cards
 
 ## Testing Strategy
 
