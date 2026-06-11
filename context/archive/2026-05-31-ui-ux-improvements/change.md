@@ -1,10 +1,10 @@
 ﻿---
 change_id: ui-ux-improvements
 title: UI/UX improvements
-status: implemented
+status: archived
 created: 2026-05-31
 updated: 2026-06-11
-archived_at: null
+archived_at: 2026-06-11T11:55:11Z
 ---
 
 ## Notes

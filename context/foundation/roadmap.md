@@ -1,4 +1,4 @@
----
+﻿---
 project: "10xCards"
 version: 1
 status: complete
@@ -150,6 +150,43 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Dokładna paleta kolorów i zestaw ikon? — Owner: user. Block: no.
 - **Risk:** Niskie ryzyko — kosmetyczne zmiany zwiększające odkrywalność i spójność UI.
+- **Status:** done
+
+## Backlog Handoff
+
+| Roadmap ID | Change ID                | Suggested issue title                        | Ready for `/10x-plan` | Notes                                 |
+| ---------- | ------------------------ | -------------------------------------------- | --------------------- | ------------------------------------- |
+| F-01       | flashcard-data-schema    | Define flashcard and review schema with RLS  | no                    | Implemented                            |
+| S-01       | ai-generation-and-review | AI flashcard generation and candidate review | no                    | Implemented                            |
+| S-02       | manual-card-creation     | Manual flashcard creation form               | no                    | Implemented                            |
+| S-03       | card-management          | Flashcard list, edit, and delete             | no                    | Implemented                            |
+| S-04       | spaced-repetition-review | Spaced repetition review session             | no                    | Implemented                            |
+| S-05       | dashboard-landing       | Dashboard landing page with navigation and sign-out | no                    | Implemented                            |
+| S-06       | ui-ux-improvements      | UI/UX polish: Finish button everywhere (except dashboard), 'All caught up!' message, modern button colors and icons | no                    | Implemented                            |
+
+## Open Roadmap Questions
+
+Brak. PRD nie zawierał otwartych pytań (`quality_check_status: accepted`), a framing roadmapy zamknął wszystkie decyzje sequencingowe. Pytania dotyczące wyboru dostawcy AI i biblioteki SR zostały zarejestrowane jako Unknowns (Block: no) w odpowiednich slajzach i nie blokują planowania.
+
+## Parked
+
+- **Niestandardowy algorytm SR** — Why parked: PRD §Non-Goals: "No custom spaced repetition algorithm." Istniejąca biblioteka SR wystarczy dla MVP.
+- **Import plików (PDF, DOCX, itp.)** — Why parked: PRD §Non-Goals: "No file import." Wklejanie tekstu wystarczy do walidacji AI generation loop.
+- **Współdzielone zestawy fiszek** — Why parked: PRD §Non-Goals: "No shared flashcard sets." Wszystkie fiszki są prywatne dla konta użytkownika.
+- **Integracje z innymi platformami** — Why parked: PRD §Non-Goals: "No integrations with other learning platforms." Brak eksportu do Anki, LMS, itp.
+- **Aplikacje mobilne** — Why parked: PRD §Non-Goals: "No mobile apps." Web only for MVP.
+- **Observability (logging, error tracking, metryki)** — Why parked: brak NFR w PRD + cel `speed`; domyślna obsługa błędów platformy Cloudflare wystarczy na MVP.
+
+
+- **S-06: Finish button dostępny na każdej stronie poza dashboardem; na /learning zamiast "No flashcards to review." wiadomość "All caught up!"; przyciski otrzymują nowoczesną paletę kolorów i kluczowe CTA dostają ikonę.
+- **Change ID:** ui-ux-improvements
+- **PRD refs:** —
+- **Prerequisites:** —
+- **Parallel with:** S-01, S-02, S-03, S-04, S-05
+- **Blockers:** —
+- **Unknowns:**
+  - Dokładna paleta kolorów i zestaw ikon? — Owner: user. Block: no.
+- **Risk:** Niskie ryzyko — kosmetyczne zmiany zwiększające odkrywalność i spójność UI.
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -183,4 +220,10 @@ All roadmap slices are implemented. Use `/10x-archive` on completed change folde
 
 - **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
 
+- **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.** — Archived 2026-06-11 → context/archive/2026-05-31-ui-ux-improvements/. Lesson: —.
+All roadmap slices are implemented. Use `/10x-archive` on completed change folders if you want to move them out of `context/changes/`.
+
+- **S-02: użytkownik może ręcznie stworzyć fiszkę, podając pytanie i odpowiedź; fiszka trafia natychmiast na listę.** — Archived 2026-06-11 → `context/archive/2026-05-27-manual-card-creation/`. Lesson: —.
+
 - **S-04: użytkownik może rozpocząć sesję powtórek i przejść przez karty zaplanowane przez algorytm SR na podstawie wyników poprzednich sesji; po sesji harmonogram każdej karty jest zaktualizowany.** — Archived 2026-06-11 → `context/archive/2026-05-28-spaced-repetition-review/`. Lesson: —.
+
