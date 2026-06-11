@@ -256,9 +256,20 @@ export default function SpacedReview({ initialCards = [], batchSize = 10 }: Spac
                     };
                   }
                   const nav = globalThis as unknown as ClipboardLike;
-                  const write = nav.clipboard?.writeText;
-                  if (typeof write === "function") {
-                    await write.call(nav.clipboard, payload);
+                  // Prefer calling the standard navigator.clipboard.writeText if available (matches test stubbing).
+                  const globalNav = (
+                    globalThis as unknown as {
+                      navigator?: { clipboard?: { writeText?: (s: string) => Promise<void> } };
+                    }
+                  ).navigator;
+                  if (globalNav?.clipboard?.writeText) {
+                    await globalNav.clipboard.writeText(payload);
+                    setCopySuccess("Copied details to clipboard");
+                    setTimeout(() => {
+                      setCopySuccess(null);
+                    }, 3000);
+                  } else if (nav.clipboard?.writeText) {
+                    await nav.clipboard.writeText(payload);
                     setCopySuccess("Copied details to clipboard");
                     setTimeout(() => {
                       setCopySuccess(null);
