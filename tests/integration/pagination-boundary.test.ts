@@ -143,10 +143,14 @@ test.runIf(isConfigured)(
 
       // Debug logging to diagnose pagination instability
       // (captures ids and created_at so we can see overlaps and ordering)
-      // eslint-disable-next-line no-console
-      console.log('DEBUG: p2bData', p2bData.map((d) => ({ id: d.id, created_at: d.created_at })));
-      // eslint-disable-next-line no-console
-      console.log('DEBUG: p3Data', p3Data.map((d) => ({ id: d.id, created_at: d.created_at })));
+      console.log(
+        "DEBUG: p2bData",
+        p2bData.map((d) => ({ id: d.id, created_at: d.created_at })),
+      );
+      console.log(
+        "DEBUG: p3Data",
+        p3Data.map((d) => ({ id: d.id, created_at: d.created_at })),
+      );
 
       const allIds = [...p2bData.map((d) => d.id), ...p3Data.map((d) => d.id)];
 
